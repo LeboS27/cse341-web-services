@@ -1,0 +1,55 @@
+### Home route
+GET http://localhost:8081/
+
+### Get all books
+GET http://localhost:8081/books
+
+### Get all authors
+GET http://localhost:8081/authors
+
+### Create a book
+POST http://localhost:8081/books
+Content-Type: application/json
+
+{
+  "title": "The Pragmatic Programmer",
+  "authorName": "David Thomas and Andrew Hunt",
+  "isbn": "9780135957059",
+  "genre": "Software Engineering",
+  "publishedYear": 2019,
+  "pages": 352,
+  "language": "English",
+  "available": true,
+  "rating": 4.8
+}
+
+### Create an author
+POST http://localhost:8081/authors
+Content-Type: application/json
+
+{
+  "name": "David Thomas",
+  "country": "United States",
+  "birthYear": 1956,
+  "primaryGenre": "Software Engineering",
+  "website": "https://pragprog.com"
+}
+
+### Replace :id with a real id returned from GET /books
+PUT http://localhost:8081/books/:id
+Content-Type: application/json
+
+{
+  "title": "Clean Code",
+  "authorName": "Robert C. Martin",
+  "isbn": "9780132350884",
+  "genre": "Software Engineering",
+  "publishedYear": 2008,
+  "pages": 464,
+  "language": "English",
+  "available": false,
+  "rating": 4.6
+}
+
+### Replace :id with a real id returned from GET /authors
+DELETE http://localhost:8081/authors/:id

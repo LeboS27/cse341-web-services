@@ -1,0 +1,176 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "CSE 341 Contacts API",
+    "description": "Weeks 01-02 API for storing and managing contacts in MongoDB.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080",
+      "description": "Local development"
+    },
+    {
+      "url": "https://your-render-app.onrender.com",
+      "description": "Replace this with your Render URL before recording the submission video"
+    }
+  ],
+  "paths": {
+    "/contacts": {
+      "get": {
+        "summary": "Get all contacts",
+        "description": "Returns every contact from the contacts collection.",
+        "responses": {
+          "200": {
+            "description": "A list of contacts"
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a contact",
+        "description": "Adds a new contact to MongoDB. All fields are required.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContactInput"
+              },
+              "example": {
+                "firstName": "Ruth",
+                "lastName": "Bader",
+                "email": "ruth.bader@example.com",
+                "favoriteColor": "white",
+                "birthday": "1933-03-15"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Contact created"
+          },
+          "400": {
+            "description": "Validation failed"
+          }
+        }
+      }
+    },
+    "/contacts/{id}": {
+      "get": {
+        "summary": "Get one contact",
+        "description": "Returns one contact by MongoDB ObjectId.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ContactId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested contact"
+          },
+          "400": {
+            "description": "Invalid ObjectId"
+          },
+          "404": {
+            "description": "Contact not found"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update one contact",
+        "description": "Replaces a contact by MongoDB ObjectId.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ContactId"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContactInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Contact updated"
+          },
+          "400": {
+            "description": "Validation failed"
+          },
+          "404": {
+            "description": "Contact not found"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete one contact",
+        "description": "Deletes a contact by MongoDB ObjectId.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ContactId"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Contact deleted"
+          },
+          "400": {
+            "description": "Invalid ObjectId"
+          },
+          "404": {
+            "description": "Contact not found"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "parameters": {
+      "ContactId": {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "description": "MongoDB ObjectId for the contact.",
+        "schema": {
+          "type": "string",
+          "example": "66f1f53b6b39b57b5a147901"
+        }
+      }
+    },
+    "schemas": {
+      "ContactInput": {
+        "type": "object",
+        "required": ["firstName", "lastName", "email", "favoriteColor", "birthday"],
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "example": "Ada"
+          },
+          "lastName": {
+            "type": "string",
+            "example": "Lovelace"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "ada.lovelace@example.com"
+          },
+          "favoriteColor": {
+            "type": "string",
+            "example": "blue"
+          },
+          "birthday": {
+            "type": "string",
+            "format": "date",
+            "example": "1815-12-10"
+          }
+        }
+      }
+    }
+  }
+}

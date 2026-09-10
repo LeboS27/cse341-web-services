@@ -1,0 +1,25 @@
+{
+  "name": "project2-crud-api",
+  "version": "1.0.0",
+  "description": "CSE 341 Week 03 CRUD API with two MongoDB collections, validation, error handling, and Swagger documentation.",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "docs": "node swagger.js",
+    "check": "node src/server.js --check"
+  },
+  "keywords": [],
+  "author": "CSE 341 Student",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "express-validator": "^7.3.2",
+    "mongodb": "^7.6.0",
+    "swagger-autogen": "^2.23.7",
+    "swagger-ui-express": "^5.0.1"
+  }
+}

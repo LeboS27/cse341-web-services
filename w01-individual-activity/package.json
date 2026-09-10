@@ -1,0 +1,28 @@
+{
+  "name": "w01-individual-activity",
+  "version": "1.0.0",
+  "description": "CSE 341 Week 01 Individual Activity backend for the provided frontend.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "check": "node server.js --check"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/byui-cse/cse341-ww-student-code.git"
+  },
+  "keywords": [],
+  "author": "CSE 341 Student",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/byui-cse/cse341-ww-student-code/issues"
+  },
+  "homepage": "https://github.com/byui-cse/cse341-ww-student-code#readme",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1"
+  }
+}
