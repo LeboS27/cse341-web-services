@@ -46,6 +46,20 @@ For final Canvas submissions, use real MongoDB. The rubrics expect the video to 
 
 Run only one project on port 8080 at a time. The Week 01 Individual Activity and Contacts API both default to 8080 because their course instructions expect that port.
 
+## Run All Local Checks
+
+From the workspace root:
+
+```powershell
+.\check-all.ps1
+```
+
+This checks:
+
+- Week 01 Individual Activity boot.
+- Contacts API boot and route tests.
+- Project 2 API boot and route tests.
+
 ## Suggested GitHub Setup
 
 After reopening PowerShell so `gh` is on PATH:

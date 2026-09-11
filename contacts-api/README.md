@@ -56,3 +56,22 @@ Open:
 - `/api-docs` works on Render.
 - MongoDB has at least five contacts with `firstName`, `lastName`, `email`, `favoriteColor`, and `birthday`.
 - Video shows GET all, GET by id, POST, PUT, DELETE, database updates, `.env` security, and MVC structure.
+
+## Extra Quality Added
+
+This project goes beyond the first two rubrics in a few helpful ways:
+
+- Validation rejects bad POST and PUT data with status `400`.
+- Missing contacts return status `404`.
+- Unexpected errors are caught by one final error handler.
+- Swagger documents all routes.
+- `requests.rest` gives repeatable REST Client examples.
+- Jest and Supertest tests prove the main routes work.
+
+## Run Tests
+
+```powershell
+npm test
+```
+
+The tests use memory mode. That means they do not change your real MongoDB database.

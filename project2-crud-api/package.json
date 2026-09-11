@@ -7,7 +7,8 @@
     "start": "node src/server.js",
     "dev": "node --watch src/server.js",
     "docs": "node swagger.js",
-    "check": "node src/server.js --check"
+    "check": "node src/server.js --check",
+    "test": "cross-env NODE_ENV=test USE_MEMORY_STORE=true jest --runInBand"
   },
   "keywords": [],
   "author": "CSE 341 Student",
@@ -21,5 +22,10 @@
     "mongodb": "^7.6.0",
     "swagger-autogen": "^2.23.7",
     "swagger-ui-express": "^5.0.1"
+  },
+  "devDependencies": {
+    "cross-env": "^10.1.0",
+    "jest": "^30.5.1",
+    "supertest": "^7.2.2"
   }
 }

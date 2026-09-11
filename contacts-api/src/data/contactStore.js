@@ -92,7 +92,9 @@ class MemoryContactStore {
 
 async function createContactStore() {
   if (process.env.USE_MEMORY_STORE === 'true' || !process.env.MONGODB_URI) {
-    console.warn('Using memory store. Add MONGODB_URI before submitting to Canvas.');
+    if (process.env.NODE_ENV !== 'test') {
+      console.warn('Using memory store. Add MONGODB_URI before submitting to Canvas.');
+    }
     return new MemoryContactStore();
   }
 

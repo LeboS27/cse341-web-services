@@ -41,3 +41,22 @@ USE_MEMORY_STORE=true
 ```
 
 For submission, use MongoDB so the video can show database updates.
+
+## Extra Quality Added
+
+This Week 03 project is prepared for later course expectations too:
+
+- It already includes Jest and Supertest route tests.
+- It uses two collections with full CRUD.
+- It validates POST and PUT bodies.
+- It gives clear `400`, `404`, and `500` style error responses.
+- It has Swagger documentation for both collections.
+- The `books` collection has nine fields, which is safely above the seven-field requirement.
+
+## Run Tests
+
+```powershell
+npm test
+```
+
+The tests use memory mode, so they are safe to run repeatedly while learning.
