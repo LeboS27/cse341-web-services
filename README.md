@@ -11,6 +11,14 @@ This workspace contains the projects and learning notes for CSE 341 Web Services
 - `submission-notes`: checklists and video scripts for Canvas submissions.
 - `diagrams`: reusable diagrams for the book and project explanations.
 
+## High-Value Submission Notes
+
+- [Week 01 video script](submission-notes/week01-video-script.md)
+- [Week 02 video script](submission-notes/week02-video-script.md)
+- [Week 03 video script](submission-notes/week03-video-script.md)
+- [MongoDB seed guide](submission-notes/mongodb-seed-guide.md)
+- [Route reference](submission-notes/route-reference.md)
+
 ## Tool Status
 
 Installed and checked:
