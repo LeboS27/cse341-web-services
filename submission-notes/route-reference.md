@@ -1,5 +1,13 @@
 # Route Reference
 
+## Production Links
+
+- GitHub repository: <https://github.com/LeboS27/cse341-web-services>
+- Contacts API base URL: <https://cse341-contacts-api-y3jc.onrender.com>
+- Contacts Swagger docs: <https://cse341-contacts-api-y3jc.onrender.com/api-docs>
+- Project 2 API base URL: <https://cse341-project2-crud-api-zoq8.onrender.com>
+- Project 2 Swagger docs: <https://cse341-project2-crud-api-zoq8.onrender.com/api-docs>
+
 ## Week 01 Individual Activity
 
 | Method | Route | Purpose |

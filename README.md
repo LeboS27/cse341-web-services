@@ -19,6 +19,14 @@ This workspace contains the projects and learning notes for CSE 341 Web Services
 - [MongoDB seed guide](submission-notes/mongodb-seed-guide.md)
 - [Route reference](submission-notes/route-reference.md)
 
+## Submitted Project Links
+
+- GitHub repository: <https://github.com/LeboS27/cse341-web-services>
+- Contacts API on Render: <https://cse341-contacts-api-y3jc.onrender.com>
+- Contacts Swagger docs: <https://cse341-contacts-api-y3jc.onrender.com/api-docs>
+- Project 2 API on Render: <https://cse341-project2-crud-api-zoq8.onrender.com>
+- Project 2 Swagger docs: <https://cse341-project2-crud-api-zoq8.onrender.com/api-docs>
+
 ## Tool Status
 
 Installed and checked:

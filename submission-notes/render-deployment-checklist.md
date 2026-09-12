@@ -2,6 +2,14 @@
 
 Use this for both APIs.
 
+## Live Deployment
+
+- GitHub repository: <https://github.com/LeboS27/cse341-web-services>
+- Contacts API: <https://cse341-contacts-api-y3jc.onrender.com>
+- Project 2 API: <https://cse341-project2-crud-api-zoq8.onrender.com>
+- Contacts Swagger: <https://cse341-contacts-api-y3jc.onrender.com/api-docs>
+- Project 2 Swagger: <https://cse341-project2-crud-api-zoq8.onrender.com/api-docs>
+
 ## Before Deploying
 
 - Make sure the project runs locally.
