@@ -27,8 +27,10 @@ Installed and checked:
 - Node.js
 - npm
 - Visual Studio Code
-- GitHub CLI was installed, but the current terminal may need to be reopened before `gh` appears on PATH.
-- MongoDB Shell was installed, but the current terminal may need to be reopened before `mongosh` appears on PATH.
+- GitHub CLI `gh` is installed at `C:\Program Files\GitHub CLI\gh.exe`.
+- MongoDB Shell `mongosh` is installed at `C:\Users\leboh\AppData\Local\Programs\mongosh\mongosh.exe`.
+
+Note: the current terminal may not see `gh` or `mongosh` through PATH yet. If a normal command fails, use the full path above or reopen PowerShell.
 
 Not installed:
 
