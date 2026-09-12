@@ -8,8 +8,16 @@ This workspace contains the projects and learning notes for CSE 341 Web Services
 - `contacts-api`: Weeks 01-02 Contacts API.
 - `project2-crud-api`: Week 03 Project 2 CRUD API.
 - `book`: course book and long-form explanations.
-- `submission-notes`: checklists and video scripts for Canvas submissions.
+- `submission-notes`: official course-material index, checklists, and video scripts for Canvas submissions.
 - `diagrams`: reusable diagrams for the book and project explanations.
+
+## Study Map
+
+- Week 01-07 course-material index: `submission-notes/course-material-index.md`
+- Full course book: `book/web-services-book.md`
+- Code reading guide: `book/code-reading-guide.md`
+- Completion audit: `submission-notes/completion-audit.md`
+- Live route reference: `submission-notes/route-reference.md`
 
 ## Tool Status
 

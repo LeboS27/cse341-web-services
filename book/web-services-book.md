@@ -88,6 +88,13 @@ Part Five: Hands-On Workbook
 49. Week 01, Week 02, And Week 03 Requirement Matrix
 50. Personal Study Plan For Mastery
 51. Project 2 Quality Upgrade Walkthrough
+52. Course Source Map From Week 01 Through Week 07
+53. HTTP Method Masterclass
+54. MongoDB Data Shape And Relationships
+55. Authentication And Authorization Workbook
+56. API Management, Testing, And Final Project Readiness
+57. Interview Answer Bank
+58. Complete Route And File Trace
 
 ## Chapter 1: What Web Services Are
 
@@ -5383,22 +5390,1241 @@ Ask yourself:
 
 If you can answer those questions, Project 2 is no longer just code on disk. It is a system you understand.
 
-## Expansion Plan For The Full 90-Page Version
+## Chapter 52: Course Source Map From Week 01 Through Week 07
 
-The current manuscript is now a much larger foundation. To expand it even closer to a printable 90-page course book, add:
+The course is easier to understand when you see the whole path at once. Each week adds one major backend skill. The projects are not random. They are a sequence.
 
-- 8 to 10 pages on HTTP examples.
-- 8 to 10 pages on Express route design.
-- 8 to 10 pages walking through MongoDB and Compass.
-- 8 to 10 pages on the Contacts project.
-- 8 to 10 pages on Swagger and API documentation.
-- 8 to 10 pages on Project 2 and designing collections.
-- 8 to 10 pages on validation and error handling.
-- 8 to 10 pages on OAuth.
-- 6 to 8 pages on testing.
-- 4 to 6 pages on deployment and video submission.
+```mermaid
+flowchart LR
+  W1[Week 01\nGET routes and Node architecture]
+  W2[Week 02\nPOST, PUT, DELETE, Swagger]
+  W3[Week 03\nProject 2 CRUD, validation, errors]
+  W4[Week 04\nOAuth and protected routes]
+  W5[Week 05\nAPI gateways and final project planning]
+  W6[Week 06\nTesting and more final project routes]
+  W7[Week 07\nFinish, publish, present, interview]
 
-Each expansion should include:
+  W1 --> W2 --> W3 --> W4 --> W5 --> W6 --> W7
+```
+
+Week 01 teaches the base shape:
+
+- Node runs JavaScript outside the browser.
+- Express receives web requests.
+- Routes decide what endpoint is being called.
+- Controllers decide what response to send.
+- MongoDB stores the data.
+- Environment variables keep secrets out of GitHub.
+
+Week 02 turns the first API into a real CRUD API:
+
+- `GET` reads data.
+- `POST` creates data.
+- `PUT` updates data.
+- `DELETE` removes data.
+- Swagger documents and tests the route contract.
+- Render proves the API works outside your own computer.
+
+Week 03 moves from a guided contacts project to your own Project 2 API:
+
+- You choose your own API topic.
+- The database needs at least two collections.
+- At least one collection needs seven or more fields.
+- CRUD must work.
+- Validation and error handling must be present.
+- Swagger must stay accurate.
+
+Week 04 adds identity and access:
+
+- Users should be able to log in and log out.
+- OAuth lets a trusted provider handle login.
+- Protected routes should block users who are not signed in.
+- Swagger should document which routes require authorization.
+
+Week 05 begins the final project focus:
+
+- The team designs an API.
+- The first two collections are built.
+- Swagger becomes the contract for the team.
+- Error handling and validation are expected early.
+- API gateways are introduced as a larger-system idea.
+
+Week 06 adds testing and the last two collections:
+
+- The final project should have four collections total.
+- POST and PUT routes need validation.
+- At least two collections need protected POST and PUT routes.
+- GET routes need unit tests.
+- Testing is no longer extra. It becomes proof.
+
+Week 07 is the finish line:
+
+- The final project is completed and published.
+- Swagger is available on Render.
+- OAuth is demonstrated.
+- Each team member identifies their own contributions.
+- The project becomes material you can discuss in interviews.
+
+### Course Pages Used For This Map
+
+These official course pages shaped the map above:
+
+- Week 01 learning activity: `https://byui-cse.github.io/cse341-ww-course/week01/prepare.html`
+- Week 02 learning activity: `https://byui-cse.github.io/cse341-ww-course/week02/prepare.html`
+- Week 02 project: `https://byui-cse.github.io/cse341-ww-course/week02/project.html`
+- Week 03 learning activity: `https://byui-cse.github.io/cse341-ww-course/week03/prepare.html`
+- Week 03 project: `https://byui-cse.github.io/cse341-ww-course/week03/project.html`
+- Week 04 learning activity: `https://byui-cse.github.io/cse341-ww-course/week04/prepare.html`
+- Week 04 project: `https://byui-cse.github.io/cse341-ww-course/week04/project.html`
+- Week 05 learning activity: `https://byui-cse.github.io/cse341-ww-course/week05/prepare.html`
+- Week 05 project: `https://byui-cse.github.io/cse341-ww-course/week05/project.html`
+- Week 06 learning activity: `https://byui-cse.github.io/cse341-ww-course/week06/prepare.html`
+- Week 06 project: `https://byui-cse.github.io/cse341-ww-course/week06/project.html`
+- Week 07 prepare page: `https://byui-cse.github.io/cse341-ww-course/week07/prepare.html`
+- Week 07 project: `https://byui-cse.github.io/cse341-ww-course/week07/project.html`
+
+The course also links to outside documentation and tutorials. The important habit is not memorizing every linked page. The important habit is learning how to read documentation, connect it to your code, and test what you build.
+
+### One Sentence For Each Week
+
+Use these sentences when you need to explain the course quickly:
+
+- Week 01: "I learned how an Express API receives GET requests and returns MongoDB data."
+- Week 02: "I added full CRUD routes and documented them with Swagger."
+- Week 03: "I designed my own API with multiple collections, validation, and error handling."
+- Week 04: "I learned how OAuth protects routes and lets a trusted provider handle login."
+- Week 05: "I learned how teams plan APIs and how gateways help larger systems manage traffic."
+- Week 06: "I learned how tests prove API behavior and catch regressions."
+- Week 07: "I learned how to present backend work clearly for submission and interviews."
+
+### What This Means For The Workspace
+
+This workspace supports the course path like this:
+
+| Course Need | Workspace Evidence |
+|---|---|
+| Week 01 individual API | `w01-individual-activity` |
+| Week 01 contacts GET routes | `contacts-api` |
+| Week 02 contacts CRUD and Swagger | `contacts-api` |
+| Week 03 Project 2 CRUD | `project2-crud-api` |
+| MongoDB deployment proof | Render services connected to Atlas |
+| Security proof | `.env` files ignored, Render uses environment variables |
+| Testing proof | Jest and Supertest tests for Contacts and Project 2 |
+| Study proof | This book and the submission notes |
+
+That is a strong package because it does not only have code. It has code, documentation, tests, deployment, and explanations.
+
+## Chapter 53: HTTP Method Masterclass
+
+HTTP methods are the verbs of a web API. A route path says what thing you are working with. The method says what action you want to perform.
+
+The Contacts API gives the clearest example:
+
+| Action | Method | Route | Database Meaning |
+|---|---|---|---|
+| Get all contacts | `GET` | `/contacts` | Read many documents |
+| Get one contact | `GET` | `/contacts/:id` | Read one document by `_id` |
+| Create contact | `POST` | `/contacts` | Insert one document |
+| Update contact | `PUT` | `/contacts/:id` | Replace fields on one document |
+| Delete contact | `DELETE` | `/contacts/:id` | Remove one document |
+
+The Project 2 API repeats the same shape for books and authors:
+
+| Collection | GET All | GET One | POST | PUT | DELETE |
+|---|---|---|---|---|---|
+| Books | `/books` | `/books/:id` | `/books` | `/books/:id` | `/books/:id` |
+| Authors | `/authors` | `/authors/:id` | `/authors` | `/authors/:id` | `/authors/:id` |
+
+Notice that `POST` uses the collection route, not the id route. The client does not know the id before the new record exists. MongoDB creates the id during insert.
+
+### GET
+
+`GET` should be safe to repeat. If you refresh a `GET /contacts` page ten times, it should not create ten contacts. It should only return data.
+
+Example:
+
+```http
+GET /contacts
+```
+
+Plain-language meaning:
+
+"Show me all contacts."
+
+Example:
+
+```http
+GET /contacts/66f1f53b6b39b57b5a147901
+```
+
+Plain-language meaning:
+
+"Show me one contact with this MongoDB id."
+
+In Express, a GET route usually looks like this:
+
+```js
+router.get('/contacts', contactController.getAllContacts);
+router.get('/contacts/:id', idRule, sendValidationErrors, contactController.getContactById);
+```
+
+Notice the second route has middleware before the controller. That middleware checks the id before the controller asks MongoDB for it.
+
+### POST
+
+`POST` creates something new.
+
+Example:
+
+```http
+POST /contacts
+Content-Type: application/json
+
+{
+  "firstName": "Ada",
+  "lastName": "Lovelace",
+  "email": "ada@example.com",
+  "favoriteColor": "blue",
+  "birthday": "1815-12-10"
+}
+```
+
+Plain-language meaning:
+
+"Create a new contact using this JSON body."
+
+A good `POST` response should use status `201`. That means "created."
+
+The Contacts API returns the new id in the response body. That matters because the id is needed for later `GET by id`, `PUT`, and `DELETE` calls.
+
+### PUT
+
+`PUT` updates an existing thing. In this course, `PUT` uses an id in the route.
+
+Example:
+
+```http
+PUT /contacts/66f1f53b6b39b57b5a147901
+Content-Type: application/json
+
+{
+  "firstName": "Ada",
+  "lastName": "Byron",
+  "email": "ada.byron@example.com",
+  "favoriteColor": "purple",
+  "birthday": "1815-12-10"
+}
+```
+
+Plain-language meaning:
+
+"Find the contact with this id and replace the editable fields with these values."
+
+The API returns `204` when the update works. `204` means "success, no response body." That is why Swagger may show a blank body after a successful update. A blank body is not a failure if the status is `204`.
+
+### DELETE
+
+`DELETE` removes one existing thing.
+
+Example:
+
+```http
+DELETE /contacts/66f1f53b6b39b57b5a147901
+```
+
+Plain-language meaning:
+
+"Remove this contact."
+
+The API returns `204` when the delete works.
+
+### Why Status Codes Matter
+
+Status codes are part of the API contract.
+
+| Status | Meaning In This Course |
+|---|---|
+| `200` | A normal read worked |
+| `201` | A new record was created |
+| `204` | An update or delete worked and there is no body |
+| `400` | The request data or id was bad |
+| `404` | The route or record was not found |
+| `500` | Something unexpected failed on the server |
+
+A strong video does not need to explain every status code in depth. It should mention the important ones when they appear:
+
+- "This POST returned 201, so the record was created."
+- "This PUT returned 204, so the update succeeded."
+- "This invalid request returned 400, so validation is working."
+
+### HTTP Method Memory Trick
+
+Use this simple memory list:
+
+- `GET` asks for data.
+- `POST` adds data.
+- `PUT` changes data.
+- `DELETE` removes data.
+
+Then connect each one to MongoDB:
+
+- `GET` maps to `find` or `findOne`.
+- `POST` maps to `insertOne`.
+- `PUT` maps to `updateOne`.
+- `DELETE` maps to `deleteOne`.
+
+```mermaid
+flowchart TD
+  Client[Client or Swagger]
+  Method{HTTP method}
+  GET[GET reads data]
+  POST[POST creates data]
+  PUT[PUT updates data]
+  DELETE[DELETE removes data]
+  Mongo[(MongoDB)]
+
+  Client --> Method
+  Method --> GET --> Mongo
+  Method --> POST --> Mongo
+  Method --> PUT --> Mongo
+  Method --> DELETE --> Mongo
+```
+
+## Chapter 54: MongoDB Data Shape And Relationships
+
+MongoDB stores data in documents. A document looks a lot like a JavaScript object or JSON object. That is why MongoDB feels natural in a Node and Express course.
+
+A contact document looks like this:
+
+```json
+{
+  "_id": "66f1f53b6b39b57b5a147901",
+  "firstName": "Ada",
+  "lastName": "Lovelace",
+  "email": "ada@example.com",
+  "favoriteColor": "blue",
+  "birthday": "1815-12-10"
+}
+```
+
+The `_id` field is special. MongoDB creates it automatically. The API uses it when a client wants one exact record.
+
+### Databases, Collections, And Documents
+
+Think of MongoDB in three levels:
+
+| Level | Plain Meaning | Course Example |
+|---|---|---|
+| Database | A named container for related data | `cse341_contacts` |
+| Collection | A group of similar documents | `contacts` |
+| Document | One record | one contact |
+
+For Project 2:
+
+| Level | Plain Meaning | Project 2 Example |
+|---|---|---|
+| Database | The library API database | `cse341_project2` |
+| Collection | A group of books | `books` |
+| Collection | A group of authors | `authors` |
+| Document | One book or one author | one JSON-like record |
+
+### Why Shape Matters
+
+MongoDB is flexible. Flexibility is useful, but it can also become messy. If one contact has `firstName`, another has `firstname`, and another has `FirstName`, your API becomes harder to trust.
+
+That is why validation and allowed fields matter.
+
+In the Contacts API, every saved contact should have:
+
+- `firstName`
+- `lastName`
+- `email`
+- `favoriteColor`
+- `birthday`
+
+In Project 2, every saved book should have:
+
+- `title`
+- `authorName`
+- `isbn`
+- `genre`
+- `publishedYear`
+- `pages`
+- `language`
+- `available`
+- `rating`
+
+Books have nine fields, so the collection goes beyond the seven-field requirement.
+
+### References In A NoSQL Database
+
+The Week 07 interview questions ask how to make relations in a NoSQL database such as MongoDB.
+
+The simple answer:
+
+"You can relate documents by storing another document's id, or by embedding related data inside the same document. The best choice depends on how the app reads and updates the data."
+
+Example with a reference:
+
+```json
+{
+  "_id": "book123",
+  "title": "Clean Code",
+  "authorId": "author456"
+}
+```
+
+This means the book points to an author document.
+
+Example with embedded data:
+
+```json
+{
+  "_id": "book123",
+  "title": "Clean Code",
+  "author": {
+    "name": "Robert C. Martin",
+    "country": "United States"
+  }
+}
+```
+
+This means the author summary is stored inside the book.
+
+### Reference Or Embed?
+
+Use a reference when:
+
+- the related item is reused in many places
+- the related item changes often
+- the document would become too large if everything were embedded
+
+Use embedded data when:
+
+- the data is usually read together
+- the data is small
+- the data does not change often
+
+For the class projects, simple documents are enough. You do not need perfect database modeling to score well. You need clear collections, required fields, working CRUD, validation, and evidence that MongoDB updates.
+
+### MongoDB Compass Video Pattern
+
+When recording a video, MongoDB Compass should prove that the database changed.
+
+Use this rhythm:
+
+1. Show the collection before creating a record.
+2. Use Swagger to send `POST`.
+3. Refresh Compass and show the new record.
+4. Copy the new `_id`.
+5. Use Swagger to send `PUT`.
+6. Refresh Compass and show changed fields.
+7. Use Swagger to send `DELETE`.
+8. Refresh Compass and show the record is gone.
+
+Do not show the connection string. If Compass shows a sidebar with the connection name, that is fine. Avoid opening areas that reveal credentials.
+
+### Database Mistakes To Avoid
+
+Common mistakes:
+
+- Creating records in the wrong database.
+- Typing the collection name differently in code and Compass.
+- Forgetting to set `MONGODB_URI` in Render.
+- Using memory mode in the deployed service.
+- Saving extra fields from request bodies.
+- Forgetting to seed enough records before recording.
+
+The safest check is to open the Render URL and MongoDB Compass side by side. If Render creates a record and Compass shows it, the app is using the real database.
+
+## Chapter 55: Authentication And Authorization Workbook
+
+Week 04 introduces OAuth. This is one of the harder topics because it involves more than your code. It involves your app, the user, the browser, and an outside identity provider.
+
+Start with two words:
+
+- Authentication means proving who someone is.
+- Authorization means deciding what that person is allowed to do.
+
+Example:
+
+Authentication:
+
+"Lebo is signed in."
+
+Authorization:
+
+"Lebo is allowed to create, update, or delete this record."
+
+### Why OAuth Exists
+
+OAuth helps because your app does not need to collect a provider password directly. Instead, the user signs in with a trusted provider. The provider sends your app proof that the sign-in worked.
+
+The app can then protect certain routes.
+
+For example, public routes might include:
+
+- `GET /books`
+- `GET /books/:id`
+- `GET /authors`
+- `GET /authors/:id`
+
+Protected routes might include:
+
+- `POST /books`
+- `PUT /books/:id`
+- `DELETE /books/:id`
+- `POST /authors`
+- `PUT /authors/:id`
+- `DELETE /authors/:id`
+
+The exact protected routes can change by assignment, but the idea is stable: reading may be public, while changing data usually requires login.
+
+### OAuth Flow In Plain Language
+
+```mermaid
+sequenceDiagram
+  participant User
+  participant Browser
+  participant API as Express API
+  participant Provider as OAuth Provider
+
+  User->>Browser: Click login
+  Browser->>API: Start login route
+  API->>Provider: Redirect user to provider
+  User->>Provider: Sign in
+  Provider->>API: Send proof of successful login
+  API->>Browser: Create session or token
+  Browser->>API: Call protected route
+  API-->>Browser: Allow request if login proof is valid
+```
+
+Plain-language reading:
+
+"The user signs in with the provider. The provider confirms the login. The API then knows whether to allow protected actions."
+
+### Sessions, Cookies, And Tokens
+
+You may see several terms when studying OAuth:
+
+- Session
+- Cookie
+- Token
+- JWT
+
+A session is server-side memory or storage that says a user is signed in.
+
+A cookie is a small value the browser stores and sends back with requests.
+
+A token is a signed or trusted value that represents login or permission.
+
+A JWT is a specific token format. JWTs are useful to understand, but the course notes that OAuth is the main requirement.
+
+### Where OAuth Fits In Express
+
+OAuth usually adds:
+
+- login route
+- logout route
+- callback route
+- middleware that checks whether the user is logged in
+
+Example route shape:
+
+```js
+router.get('/login', passport.authenticate('github'));
+router.get('/logout', logoutController.logout);
+router.get('/auth/callback', passport.authenticate('github'), authController.success);
+```
+
+Example protected route shape:
+
+```js
+router.post('/books', requireLogin, bookRules, sendValidationErrors, controller.create);
+```
+
+Plain-language reading:
+
+"Before creating a book, check that the user is logged in. Then validate the body. Then run the controller."
+
+Order matters. If the route changes data, login should happen before the database write.
+
+### What To Show In An OAuth Video
+
+For Week 04 or the final project, show:
+
+- the published Render `/api-docs` page
+- a protected route failing before login
+- the login flow working
+- the logged-in user can access something private
+- a protected POST or PUT route working after login
+- MongoDB updating after the authorized request
+- logout working
+- the same protected route failing again after logout
+
+That sequence proves both authentication and authorization.
+
+### Simple OAuth Explanation For Your Own Words
+
+Use this if you need to explain OAuth without sounding overly technical:
+
+"OAuth lets my app rely on a trusted login provider. The user signs in with that provider, and my app receives proof that the login worked. Then my Express middleware can decide whether protected routes should continue or return an unauthorized response."
+
+### Security Habits
+
+OAuth does not remove the need for basic security habits.
+
+Still do these:
+
+- Keep client secrets out of GitHub.
+- Put secrets in `.env` locally.
+- Put secrets in Render environment variables online.
+- Do not print secrets in logs.
+- Use validation before saving user-provided data.
+- Return clear errors without leaking private details.
+
+Security is not one feature. It is a habit across the project.
+
+## Chapter 56: API Management, Testing, And Final Project Readiness
+
+Weeks 05 through 07 are about moving from a single assignment to a larger project. The final project asks for a complete backend API with multiple collections, CRUD, validation, OAuth, testing, Swagger, deployment, and a clear video.
+
+### API Gateways In Plain Language
+
+An API gateway is a front door in front of one or more APIs.
+
+```mermaid
+flowchart LR
+  Client[Client App]
+  Gateway[API Gateway]
+  Auth[Auth Check]
+  Limit[Rate Limit]
+  Logs[Logging]
+  ServiceA[Books API]
+  ServiceB[Users API]
+  ServiceC[Orders API]
+
+  Client --> Gateway
+  Gateway --> Auth
+  Gateway --> Limit
+  Gateway --> Logs
+  Gateway --> ServiceA
+  Gateway --> ServiceB
+  Gateway --> ServiceC
+```
+
+In this course, you usually call Express directly. But the concept matters because real systems often grow beyond one small API.
+
+An API gateway can help with:
+
+- authentication
+- rate limiting
+- routing
+- logging
+- versioning
+- hiding internal service details
+- keeping the frontend stable while backend services change
+
+For a class project, you do not need to build a full gateway unless assigned. You need to understand what problem it solves.
+
+### Final Project Requirement Map
+
+The Week 07 final project expects a larger version of the same ideas you practiced earlier.
+
+| Requirement | How To Prove It |
+|---|---|
+| Four collections | Show MongoDB collections and Swagger route groups |
+| One collection with seven or more fields | Open the schema/example and one MongoDB document |
+| MongoDB connection | Use published Render routes and show Compass updates |
+| Full CRUD | Show GET, POST, PUT, DELETE routes |
+| Validation | Send one bad POST or PUT and show status 400 |
+| Error handling | Show invalid id or missing record response |
+| GET route tests | Run the test command and show passing tests |
+| OAuth | Show login, protected route blocked before login, allowed after login |
+| Swagger | Open `/api-docs` on Render |
+| Render deployment | Use the `onrender.com` URL |
+| Individual contributions | State two specific things you personally built |
+
+### A Practical Final Project Shape
+
+A strong final project might use collections like:
+
+- `books`
+- `authors`
+- `members`
+- `loans`
+
+The course does not require this exact topic. This is just a clear backend example.
+
+Possible fields:
+
+`books`:
+
+- `title`
+- `authorName`
+- `isbn`
+- `genre`
+- `publishedYear`
+- `pages`
+- `language`
+- `available`
+- `rating`
+
+`authors`:
+
+- `name`
+- `country`
+- `birthYear`
+- `primaryGenre`
+- `website`
+
+`members`:
+
+- `firstName`
+- `lastName`
+- `email`
+- `membershipLevel`
+- `joinedDate`
+
+`loans`:
+
+- `bookId`
+- `memberId`
+- `borrowedDate`
+- `dueDate`
+- `returned`
+
+That design lets you talk about both simple collections and relationships.
+
+### Testing Strategy For The Final Project
+
+The course asks for GET route tests. That means your test suite should cover each collection with:
+
+- `GET /collection`
+- `GET /collection/:id`
+
+For four collections, that means at least eight GET route tests.
+
+This workspace already goes further for Project 2 by testing full CRUD in memory mode. That is useful because it catches mistakes before deployment.
+
+Testing layers:
+
+| Test Type | What It Proves |
+|---|---|
+| Boot check | The app can start |
+| GET-all test | The list route returns JSON |
+| GET-by-id test | The id route returns one record |
+| POST test | The create route validates and saves |
+| PUT test | The update route validates and changes data |
+| DELETE test | The delete route removes data |
+| Validation test | Bad input gets status 400 |
+
+### How To Read A Supertest Test
+
+Example:
+
+```js
+const response = await request(app).get('/books');
+
+expect(response.status).toBe(200);
+expect(Array.isArray(response.body)).toBe(true);
+```
+
+Plain-language reading:
+
+"Ask the Express app for `/books`. The response should be successful, and the body should be an array."
+
+Example:
+
+```js
+const response = await request(app).post('/books').send(validBook());
+
+expect(response.status).toBe(201);
+expect(response.body).toHaveProperty('id');
+```
+
+Plain-language reading:
+
+"Send a valid book. The API should create it and return the new id."
+
+### Readiness Checklist Before Recording
+
+Use this checklist before every project video:
+
+- GitHub has the latest commit.
+- Render has redeployed the latest commit.
+- `/api-docs` opens on Render.
+- Swagger points to the Render server, not only localhost.
+- MongoDB contains the required collections.
+- Each required collection has enough records.
+- POST works.
+- PUT works.
+- DELETE works.
+- Bad input returns `400`.
+- Missing records return `404`.
+- Secrets are not visible in GitHub.
+- The video is between 5 and 8 minutes when the rubric says 5 to 8 minutes.
+- You submit GitHub, Render, and YouTube links.
+
+## Chapter 57: Interview Answer Bank
+
+Week 07 includes interview preparation. The questions may look separate from the coding work, but they are connected. Every interview answer is easier when you connect it to something you built.
+
+### What Is Node.js?
+
+Short answer:
+
+"Node.js is a runtime that lets JavaScript run outside the browser."
+
+Expanded answer:
+
+"In this course, Node.js runs the backend server. Express runs on top of Node and gives us a clean way to define routes like `GET /contacts` and `POST /books`."
+
+### Is NPM A Programming Language?
+
+No.
+
+NPM stands for Node Package Manager. It helps install packages, run scripts, and manage project dependencies.
+
+In this workspace, NPM installs packages like:
+
+- `express`
+- `mongodb`
+- `dotenv`
+- `swagger-ui-express`
+- `jest`
+- `supertest`
+
+### How Do You Initialize A Node Project?
+
+The common command is:
+
+```powershell
+npm init -y
+```
+
+That creates `package.json`. The `package.json` file describes the project, scripts, and dependencies.
+
+### What Is Express?
+
+Express is a web framework for Node.js. It helps create routes and middleware.
+
+Example:
+
+```js
+app.use('/contacts', contactRoutes);
+```
+
+Plain-language reading:
+
+"When a request begins with `/contacts`, send it to the contact routes file."
+
+### What Are Middleware Functions?
+
+Middleware functions run during the request-response cycle. They can:
+
+- read the request
+- change the request
+- stop the request
+- send a response
+- pass control to the next function
+
+Example:
+
+```js
+app.use(express.json());
+```
+
+Plain-language reading:
+
+"Read JSON request bodies so controllers can use `req.body`."
+
+Example:
+
+```js
+router.post('/', contactRules, sendValidationErrors, controller.createContact);
+```
+
+Plain-language reading:
+
+"Validate the body. If it is good, create the contact. If it is bad, return a 400 response."
+
+### What Does MVC Stand For?
+
+MVC stands for Model, View, Controller.
+
+In an API-only project, there may not be a traditional visual view. The response JSON is the output.
+
+For this course:
+
+- routes map URLs to controller functions
+- controllers handle HTTP decisions
+- data store files talk to MongoDB
+- validation middleware checks incoming data
+
+### What Is The Responsibility Of The Model?
+
+The model or data layer owns the shape and persistence of data.
+
+In this workspace, `contactStore.js` and `libraryStore.js` act like the data layer. They know how to read and write MongoDB documents.
+
+### What Is The Responsibility Of The Controller?
+
+The controller receives a request after routing and validation. It calls the data layer and decides what HTTP response to send.
+
+For example, a controller might:
+
+- return `200` with data
+- return `201` with a new id
+- return `204` after an update
+- return `404` if no record exists
+- pass unexpected errors to the error handler
+
+### How Do You Use An Express Router?
+
+You create a router in a separate file:
+
+```js
+const router = express.Router();
+
+router.get('/', controller.getAll);
+router.post('/', rules, sendValidationErrors, controller.create);
+
+module.exports = router;
+```
+
+Then connect it in the app:
+
+```js
+app.use('/books', bookRoutes);
+```
+
+Plain-language reading:
+
+"The app owns the base path. The router owns the routes inside that path."
+
+### What Are The Most Important Pieces Of MongoDB Structure?
+
+The main pieces are:
+
+- cluster
+- database
+- collection
+- document
+- field
+- `_id`
+
+In this course, the most important ones are database, collection, document, and `_id`.
+
+### How Do You Find The Id Of A MongoDB Document?
+
+MongoDB creates `_id` for every document. You can see it in:
+
+- MongoDB Compass
+- Atlas Data Explorer
+- API JSON responses
+- Swagger responses
+
+The API uses this id in routes like:
+
+```http
+GET /contacts/:id
+PUT /books/:id
+DELETE /authors/:id
+```
+
+### What Is Sanitizing?
+
+Sanitizing means cleaning data before saving or using it.
+
+Examples:
+
+- trimming spaces from strings
+- converting `"2026"` into `2026`
+- converting `"false"` into `false`
+- ignoring extra fields that should not be saved
+
+Validation asks, "Is this acceptable?"
+
+Sanitizing asks, "Can we clean this into the shape we want?"
+
+### What Do `skip()` And `limit()` Do?
+
+In MongoDB queries, `skip()` and `limit()` are often used for pagination.
+
+Example idea:
+
+```js
+collection.find().skip(20).limit(10);
+```
+
+Plain-language reading:
+
+"Skip the first 20 results and return the next 10."
+
+That would be useful for a page that shows ten records at a time.
+
+### Which HTTP Verb Deletes Something?
+
+`DELETE`.
+
+Example:
+
+```http
+DELETE /contacts/66f1f53b6b39b57b5a147901
+```
+
+### What Do Status Code Ranges Mean?
+
+| Range | Meaning |
+|---|---|
+| `200-299` | Success |
+| `300-399` | Redirect |
+| `400-499` | Client-side request problem |
+| `500-599` | Server-side problem |
+
+### Strong Portfolio Answer
+
+Use this when someone asks what you built:
+
+"I built and deployed Node.js and Express REST APIs connected to MongoDB Atlas. The APIs use separated route, controller, validation, and data-access files, and they expose CRUD endpoints documented through Swagger. I deployed them on Render, kept secrets in environment variables, and added automated tests with Jest and Supertest so the main routes can be verified without touching the live database."
+
+That answer is strong because it names tools, architecture, deployment, security, and testing.
+
+## Chapter 58: Complete Route And File Trace
+
+This chapter connects route behavior to exact files. When you get lost, start here.
+
+### Contacts API Route Trace
+
+Route:
+
+```http
+GET /contacts
+```
+
+File path:
+
+```text
+contacts-api/src/routes/contactRoutes.js
+```
+
+Route file job:
+
+"When someone asks for all contacts, call the controller's get-all function."
+
+Controller file:
+
+```text
+contacts-api/src/controllers/contactController.js
+```
+
+Controller job:
+
+"Ask the store for all contacts and send status 200 with JSON."
+
+Data file:
+
+```text
+contacts-api/src/data/contactStore.js
+```
+
+Data job:
+
+"Use MongoDB to find every contact document."
+
+Route:
+
+```http
+POST /contacts
+```
+
+Validation file:
+
+```text
+contacts-api/src/middleware/validate.js
+```
+
+Validation job:
+
+"Check that first name, last name, email, favorite color, and birthday are present and valid."
+
+Then the controller creates the contact, and the data store inserts it into MongoDB.
+
+### Project 2 Book Route Trace
+
+Route:
+
+```http
+POST /books
+```
+
+Route file:
+
+```text
+project2-crud-api/src/routes/bookRoutes.js
+```
+
+Important line idea:
+
+```js
+router.post('/', bookRules, sendValidationErrors, controller.create);
+```
+
+Plain-language reading:
+
+"For a book create request, validate the book body first. If it passes, create the book."
+
+Validation file:
+
+```text
+project2-crud-api/src/middleware/validate.js
+```
+
+Validation job:
+
+"Check all required book fields, convert number-like and boolean-like values, and return 400 if the input is bad."
+
+Controller factory:
+
+```text
+project2-crud-api/src/controllers/makeCrudController.js
+```
+
+Controller job:
+
+"Use the same CRUD behavior for books and authors, but save only fields allowed for that collection."
+
+Data file:
+
+```text
+project2-crud-api/src/data/libraryStore.js
+```
+
+Data job:
+
+"Insert, find, update, or delete documents from the selected MongoDB collection."
+
+### Project 2 Author Route Trace
+
+Route:
+
+```http
+PUT /authors/:id
+```
+
+Flow:
+
+```mermaid
+flowchart LR
+  Request[PUT /authors/:id]
+  IdCheck[Check ObjectId]
+  BodyCheck[Validate author body]
+  Controller[Controller update]
+  Fields[Allowed field filter]
+  Store[Author store]
+  DB[(MongoDB authors)]
+  Response[204 or error]
+
+  Request --> IdCheck --> BodyCheck --> Controller --> Fields --> Store --> DB --> Response
+```
+
+This route has two kinds of validation:
+
+- the id must be a valid MongoDB ObjectId
+- the body must contain valid author data
+
+That is more professional than only checking one thing.
+
+### Swagger File Trace
+
+Swagger lives in:
+
+```text
+contacts-api/swagger.json
+project2-crud-api/swagger.json
+```
+
+The app serves it in:
+
+```text
+contacts-api/src/app.js
+project2-crud-api/src/app.js
+```
+
+Swagger matters because it is both documentation and a testing surface.
+
+For the video, say:
+
+"Swagger lists every required route, and I can test the published Render API directly from this page."
+
+### Test File Trace
+
+Contacts tests:
+
+```text
+contacts-api/src/app.test.js
+```
+
+Project 2 tests:
+
+```text
+project2-crud-api/src/app.test.js
+```
+
+The tests use memory stores, not the real database. That is good for automated tests because:
+
+- tests run faster
+- tests are repeatable
+- tests do not damage real submission data
+- tests do not need the MongoDB password
+
+The video still needs MongoDB proof, but the test suite gives extra confidence before recording.
+
+### Render Trace
+
+Render reads the project settings from:
+
+```text
+render.yaml
+```
+
+The important ideas are:
+
+- each service has a root directory
+- each service has a build command
+- each service has a start command
+- `MONGODB_URI` is an environment variable
+- secrets are synced outside GitHub
+
+### How To Debug By Following The Trace
+
+If a route fails, follow this order:
+
+1. Does the URL match the route file?
+2. Does the HTTP method match?
+3. Does validation reject the request?
+4. Does the controller call the right store?
+5. Does the store use the right collection?
+6. Does MongoDB contain the expected data?
+7. Does Swagger match the route?
+8. Does Render have the latest commit?
+9. Does Render have the needed environment variables?
+
+That turns debugging from guessing into tracing.
+
+## Continued Study Roadmap
+
+This manuscript is now a full course guide and code companion. To keep growing it as you move through the semester, add your own notes in these areas:
+
+- screenshots from your own Swagger demos
+- screenshots from MongoDB Compass after successful writes
+- notes from instructor feedback
+- questions from quizzes
+- examples from your team final project
+- interview answers rewritten in your own voice
+
+Each time you add a new note, try to include:
 
 - A plain-language explanation.
 - A code example from this workspace.
