@@ -1,0 +1,40 @@
+services:
+  - type: web
+    name: cse341-contacts-api
+    runtime: node
+    plan: free
+    rootDir: contacts-api
+    buildCommand: npm ci
+    startCommand: npm start
+    autoDeployTrigger: commit
+    healthCheckPath: /
+    envVars:
+      - key: MONGODB_URI
+        sync: false
+      - key: DATABASE_NAME
+        value: cse341_contacts
+      - key: CONTACTS_COLLECTION
+        value: contacts
+      - key: USE_MEMORY_STORE
+        value: "false"
+
+  - type: web
+    name: cse341-project2-crud-api
+    runtime: node
+    plan: free
+    rootDir: project2-crud-api
+    buildCommand: npm ci
+    startCommand: npm start
+    autoDeployTrigger: commit
+    healthCheckPath: /
+    envVars:
+      - key: MONGODB_URI
+        sync: false
+      - key: DATABASE_NAME
+        value: cse341_library
+      - key: BOOKS_COLLECTION
+        value: books
+      - key: AUTHORS_COLLECTION
+        value: authors
+      - key: USE_MEMORY_STORE
+        value: "false"
