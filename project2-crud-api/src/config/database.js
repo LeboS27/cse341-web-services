@@ -9,6 +9,7 @@ class MongoConnection {
   }
 
   async connect() {
+    // Reuse the existing database connection after the first successful call.
     if (this.database) {
       return this.database;
     }
@@ -17,6 +18,8 @@ class MongoConnection {
       throw new Error('MONGODB_URI is missing. Add it to .env or use USE_MEMORY_STORE=true for practice.');
     }
 
+    // The real URI is stored in .env locally and Render environment variables
+    // online. It should never be committed to GitHub.
     this.client = new MongoClient(process.env.MONGODB_URI);
     await this.client.connect();
     this.database = this.client.db(process.env.DATABASE_NAME || 'cse341_library');
@@ -24,6 +27,7 @@ class MongoConnection {
   }
 
   async close() {
+    // Closing matters for boot checks and automated tests.
     if (this.client) {
       await this.client.close();
     }

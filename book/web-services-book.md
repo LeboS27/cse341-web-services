@@ -16,6 +16,8 @@ This is a living manuscript. The first version focuses on the code already built
 
 ## Table Of Contents
 
+Part One: Core Course Path
+
 1. What Web Services Are
 2. The Course Stack
 3. HTTP In Plain Language
@@ -31,6 +33,60 @@ This is a living manuscript. The first version focuses on the code already built
 13. Code Walkthrough: Project 2 CRUD API
 14. Submission Strategy
 15. Glossary
+
+Part Two: Week-By-Week Study Guide
+
+- Week 01 Deep Study: Web Services And Node Architecture
+- Week 02 Deep Study: HTTP Requests And API Documentation
+- Week 03 Deep Study: REST, Alternatives, Validation, And Error Handling
+- Week 04 Deep Study: OAuth And Protected Routes
+- Week 05 Deep Study: API Gateways
+- Week 06 Deep Study: Testing
+- Week 07 Deep Study: Talking About Your Work
+
+Part Three: Backend Developer Field Guide
+
+16. Thinking In Layers
+17. The Request Lifecycle
+18. Designing Good Resources
+19. Database Modeling With MongoDB
+20. Environment Variables And Secrets
+21. Swagger As A Learning Tool
+22. Validation Strategy
+23. Error Handling Strategy
+24. Deployment Thinking
+25. Video Proof
+26. Reading `package.json`
+27. Reading `server.js`
+28. Reading Route Files
+29. Reading Controllers
+30. Reading Data Store Files
+31. Reading Validation Files
+32. Reading Tests
+33. What "Above And Beyond" Means For These Assignments
+34. How To Make Your Own Changes Safely
+35. Capstone Mental Model
+
+Part Four: Deeper Course Expansion
+
+36. Week 04 OAuth In Plain Language
+37. Designing Protected Routes
+38. Week 05 API Gateways And Managers
+39. Week 06 Testing More Deeply
+40. Week 07 Resume And Interview Preparation
+41. Full Request Examples From The Course Projects
+42. A Practical Debugging Map
+43. Submission And Video Master Checklist
+
+Part Five: Hands-On Workbook
+
+44. Contacts API File-By-File Study
+45. MongoDB Atlas Workbook
+46. Render And GitHub Workbook
+47. Swagger Practice Workbook
+48. Safe Change Workbook
+49. Week 01, Week 02, And Week 03 Requirement Matrix
+50. Personal Study Plan For Mastery
 
 ## Chapter 1: What Web Services Are
 
@@ -2706,6 +2762,8 @@ That is the heart of CSE 341.
 
 The earlier chapters gave the main path through the projects. This part slows down and studies the ideas again from another angle. The goal is to help you become comfortable enough to explain the work, change it, and debug it without feeling lost.
 
+![Authentication and testing flow](../diagrams/auth-testing-flow.png)
+
 ## Chapter 36: Week 04 OAuth In Plain Language
 
 Week 04 introduces OAuth. This is often the first topic in the course that feels larger than a normal route, because OAuth is not just one function. It is a conversation between several systems.
@@ -3749,6 +3807,1295 @@ https://cse341-project2-crud-api-zoq8.onrender.com/api-docs
 ```
 
 The video should guide the grader through the evidence. You are not only saying the project works. You are showing why the rubric should give full credit.
+
+## Part Five: Hands-On Workbook
+
+This part is written like a guided notebook. Read it with the code open beside you. The goal is to make the projects feel editable. When you understand where each responsibility lives, you can change the API without being afraid that one small edit will break everything.
+
+## Chapter 44: Contacts API File-By-File Study
+
+The Contacts API is the most important project to understand first because it grows across Weeks 01 and 02. Week 01 asks for reading contacts. Week 02 asks for full CRUD and Swagger. The same project supports both.
+
+The project lives here:
+
+```text
+contacts-api
+```
+
+The most important files are:
+
+```text
+src/server.js
+src/app.js
+src/routes/contactRoutes.js
+src/controllers/contactController.js
+src/middleware/validate.js
+src/data/contactStore.js
+src/config/database.js
+swagger.json
+requests.rest
+package.json
+```
+
+Each file has a narrow job.
+
+### `package.json`
+
+Start with `package.json` because it tells you how the project runs.
+
+Important section:
+
+```json
+"scripts": {
+  "start": "node src/server.js",
+  "dev": "node --watch src/server.js",
+  "docs": "node swagger.js",
+  "check": "node src/server.js --check",
+  "test": "cross-env NODE_ENV=test USE_MEMORY_STORE=true jest --runInBand"
+}
+```
+
+Plain-language reading:
+
+- `start` runs the API normally.
+- `dev` runs the API and restarts when files change.
+- `docs` can generate Swagger support files.
+- `check` makes sure the API can boot.
+- `test` runs automated route checks.
+
+Render uses `npm start`, so the `start` script matters for deployment. If `start` is wrong, Render can install packages successfully and still fail when it tries to run the app.
+
+The dependencies also tell a story:
+
+- `express` creates the web server and routes.
+- `mongodb` talks to MongoDB Atlas.
+- `dotenv` loads `.env` values while developing locally.
+- `swagger-ui-express` shows the Swagger page.
+- `express-validator` checks request bodies and ids.
+- `cors` lets browser tools call the API.
+
+When you can explain the package list, you can explain the shape of the project.
+
+### `src/server.js`
+
+`server.js` starts the app.
+
+It does not define every route. It does not directly query MongoDB. It does not validate contacts. That restraint is a good thing.
+
+The main flow is:
+
+```js
+const store = await createContactStore();
+const app = createApp({ store });
+```
+
+Plain-language reading:
+
+"Create the data store, then create the Express app using that store."
+
+The data store might be real MongoDB or memory mode. The app does not need to care which one. That makes tests easier because tests can use memory mode while Render uses MongoDB.
+
+Then:
+
+```js
+const port = process.env.PORT || 8080;
+app.listen(port, () => {
+  console.log(`Contacts API is running on port ${port}`);
+});
+```
+
+Plain-language reading:
+
+"Use Render's port if Render gives one. Otherwise, use 8080 locally."
+
+This one line is a deployment habit. Many deployed services provide a `PORT` value. If your app hard-codes only `8080`, deployment can fail. If your app uses `process.env.PORT || 8080`, it works in both places.
+
+### `src/app.js`
+
+`app.js` builds the Express app.
+
+It connects the pieces:
+
+```js
+app.use(cors());
+app.use(express.json());
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.locals.store = store;
+app.use('/contacts', contactRoutes);
+```
+
+Plain-language reading:
+
+- Allow browser requests.
+- Parse JSON bodies.
+- Show Swagger docs at `/api-docs`.
+- Store the database object where controllers can reach it.
+- Send `/contacts` requests to the contacts route file.
+
+This is the file that wires the application together. It is like a table of contents for the server.
+
+The home route is also useful:
+
+```js
+app.get('/', (req, res) => {
+  res.json({
+    message: 'Welcome to the CSE 341 Contacts API.',
+    docs: '/api-docs',
+    week01Routes: ['GET /contacts', 'GET /contacts/:id'],
+    week02Routes: ['POST /contacts', 'PUT /contacts/:id', 'DELETE /contacts/:id']
+  });
+});
+```
+
+This route is not the main assignment requirement, but it helps prove the app is awake. When you open the Render base URL and see JSON, you know the service started.
+
+### `src/routes/contactRoutes.js`
+
+The route file is the API map.
+
+```js
+router.get('/', controller.getAllContacts);
+router.get('/:id', idRule, sendValidationErrors, controller.getContactById);
+router.post('/', contactRules, sendValidationErrors, controller.createContact);
+router.put('/:id', idRule, contactRules, sendValidationErrors, controller.updateContact);
+router.delete('/:id', idRule, sendValidationErrors, controller.deleteContact);
+```
+
+Each line answers four questions:
+
+- Which HTTP method?
+- Which path?
+- Which middleware runs first?
+- Which controller finishes the request?
+
+For example:
+
+```js
+router.put('/:id', idRule, contactRules, sendValidationErrors, controller.updateContact);
+```
+
+Plain-language reading:
+
+"When a PUT request comes to one contact id, check that the id is valid, check that the contact body is valid, send any validation errors, then run the update controller."
+
+That is a lot of behavior in one readable line.
+
+### `src/middleware/validate.js`
+
+Validation is where the project protects the database from bad input.
+
+The Week 02 rubric says the Contacts collection needs these fields:
+
+- `firstName`
+- `lastName`
+- `email`
+- `favoriteColor`
+- `birthday`
+
+The validation file checks those fields before POST and PUT reach the controller.
+
+Example:
+
+```js
+body('email').trim().isEmail().withMessage('email must be a valid email address.')
+```
+
+Plain-language reading:
+
+"Trim spaces from email, then make sure it looks like an email address. If it fails, return this message."
+
+Validation helps the user because the response explains what went wrong. It also helps the database because invalid records do not get saved.
+
+### `src/controllers/contactController.js`
+
+Controllers make decisions about responses.
+
+Example:
+
+```js
+const contact = await req.app.locals.store.findById(req.params.id);
+
+if (!contact) {
+  return res.status(404).json({
+    error: 'Contact not found',
+    message: `No contact exists with id ${req.params.id}.`
+  });
+}
+
+return res.json(contact);
+```
+
+Plain-language reading:
+
+"Ask the store for one contact. If no contact exists, return 404. If the contact exists, return it as JSON."
+
+The controller knows HTTP status codes. The store knows MongoDB. That separation is healthy.
+
+The helper:
+
+```js
+function buildContactFromBody(body) {
+  return CONTACT_FIELDS.reduce((contact, field) => {
+    contact[field] = body[field];
+    return contact;
+  }, {});
+}
+```
+
+Plain-language reading:
+
+"Only save the official contact fields, even if the request body includes extra data."
+
+This is a small professional upgrade. It keeps the database shape clean.
+
+### `src/data/contactStore.js`
+
+The store is where data operations live.
+
+For MongoDB:
+
+```js
+return collection.find({}).sort({ lastName: 1, firstName: 1 }).toArray();
+```
+
+Plain-language reading:
+
+"Find all contacts, sort them by last name and first name, and return them as an array."
+
+For one contact:
+
+```js
+return collection.findOne({ _id: new ObjectId(id) });
+```
+
+Plain-language reading:
+
+"Find one document whose MongoDB `_id` matches this id."
+
+The `new ObjectId(id)` part matters because MongoDB ids are not just normal strings inside the database.
+
+The file also has `MemoryContactStore`. That is not a replacement for MongoDB in the final video. It is a practice and testing tool. It lets the tests run without touching the real Atlas database.
+
+### `src/config/database.js`
+
+The database config file owns the MongoDB connection.
+
+Important line:
+
+```js
+const uri = process.env.MONGODB_URI;
+```
+
+Plain-language reading:
+
+"Read the private connection string from the environment."
+
+That is the security pattern. The connection string is not written into the code. It is not pushed to GitHub. Locally it belongs in `.env`. On Render it belongs in environment variables.
+
+### `swagger.json`
+
+Swagger is the public contract.
+
+The code says what the API does. Swagger says what the API promises.
+
+For Week 02, Swagger must document:
+
+- `GET /contacts`
+- `GET /contacts/{id}`
+- `POST /contacts`
+- `PUT /contacts/{id}`
+- `DELETE /contacts/{id}`
+
+Notice the difference:
+
+```text
+Express: /contacts/:id
+Swagger: /contacts/{id}
+```
+
+They mean the same thing: the id part changes for each record.
+
+### `requests.rest`
+
+The REST file is a practice sheet.
+
+It lets you send requests from VS Code with the REST Client extension. It is not required if Swagger works, but it is helpful for learning.
+
+A request in `requests.rest` looks like:
+
+```http
+POST {{baseUrl}}/contacts
+Content-Type: application/json
+
+{
+  "firstName": "Mary",
+  "lastName": "Jackson",
+  "email": "mary.jackson@example.com",
+  "favoriteColor": "red",
+  "birthday": "1921-04-09"
+}
+```
+
+This is the same request you can send through Swagger.
+
+### Study Exercise
+
+Open each file and answer:
+
+- Which file starts the app?
+- Which file lists the routes?
+- Which file checks the body?
+- Which file returns status codes?
+- Which file talks to MongoDB?
+- Which file documents the API?
+- Which file proves the routes work in tests?
+
+If you can answer those questions without looking at this chapter, you understand the architecture.
+
+## Chapter 45: MongoDB Atlas Workbook
+
+MongoDB Atlas is the hosted database service used by the deployed API. Atlas can feel intimidating at first because it has clusters, projects, users, network rules, databases, and collections. The trick is to separate those ideas.
+
+### Organization, Project, Cluster
+
+Atlas has a hierarchy.
+
+```mermaid
+flowchart TB
+  Org[Organization] --> Project[Project]
+  Project --> Cluster[Cluster0]
+  Cluster --> Database[cse341_contacts]
+  Database --> Collection[contacts]
+  Collection --> Documents[Contact Documents]
+```
+
+An organization is the top-level account space.
+
+A project groups related database resources.
+
+A cluster is the actual database deployment.
+
+A database is a named container inside the cluster.
+
+A collection is like a folder of documents.
+
+A document is one record.
+
+For the Contacts API:
+
+```text
+Cluster: Cluster0
+Database: cse341_contacts
+Collection: contacts
+```
+
+For Project 2:
+
+```text
+Cluster: Cluster0
+Database: cse341_library
+Collections: books, authors
+```
+
+One cluster can hold more than one database. That is why both APIs can use the same Atlas cluster while storing data separately.
+
+### Documents
+
+A MongoDB document looks like JSON.
+
+Contact document:
+
+```json
+{
+  "_id": "6aa5a54d0c84337849981672",
+  "firstName": "Ada",
+  "lastName": "Lovelace",
+  "email": "ada.lovelace@example.com",
+  "favoriteColor": "blue",
+  "birthday": "1815-12-10"
+}
+```
+
+The `_id` field is created by MongoDB. Your app uses it for GET by id, PUT, and DELETE.
+
+### Why The Connection String Is Secret
+
+The MongoDB connection string can include:
+
+- username
+- password
+- cluster address
+- options
+
+That means it should be treated like a key to the database.
+
+Bad:
+
+```js
+const uri = 'mongodb+srv://realUser:realPassword@cluster0.example.mongodb.net/';
+```
+
+Good:
+
+```js
+const uri = process.env.MONGODB_URI;
+```
+
+The good version says:
+
+"The code knows it needs a URI, but the secret value comes from the environment."
+
+That lets you push the code to GitHub without exposing the password.
+
+### Network Access
+
+Atlas uses a network access list. This controls which IP addresses are allowed to connect.
+
+For local development, you can add your current IP address.
+
+For Render, the app may run from cloud infrastructure where the outbound IP can change on free plans. For class projects, students often allow broader access so the deployed API can connect. If you do that, use a strong database user password and only grant the access needed for the assignment.
+
+The important concept:
+
+```text
+MongoDB user controls who can log in.
+Network access controls where connections can come from.
+```
+
+Both must be correct.
+
+### Database User
+
+The database user is not the same as your Atlas login.
+
+Your Atlas login opens the dashboard.
+
+The database user lets the application connect to the database.
+
+In an app, the database user is used by `MONGODB_URI`. The app does not log in through the Atlas website. It connects directly to the cluster using the connection string.
+
+### How POST Changes MongoDB
+
+When you send:
+
+```http
+POST /contacts
+```
+
+with a valid body, the path is:
+
+```mermaid
+sequenceDiagram
+  participant Swagger
+  participant API
+  participant Store
+  participant Atlas
+  Swagger->>API: POST /contacts with JSON body
+  API->>API: Validate required fields
+  API->>Store: create(contact)
+  Store->>Atlas: insertOne(contact)
+  Atlas-->>Store: insertedId
+  Store-->>API: new contact with _id
+  API-->>Swagger: 201 Created
+```
+
+That is why the Week 02 video should show MongoDB after POST. The route is not just returning a success message. It is changing the database.
+
+### How PUT Changes MongoDB
+
+PUT uses an id:
+
+```http
+PUT /contacts/6aa5a54d0c84337849981672
+```
+
+The controller asks the store to replace the document with that id.
+
+In the Contacts API, PUT expects all five fields again. That is simpler than partial updates. The request body should include the full contact shape.
+
+### How DELETE Changes MongoDB
+
+DELETE uses an id and no body:
+
+```http
+DELETE /contacts/6aa5a54d0c84337849981672
+```
+
+The store sends `deleteOne` to MongoDB. MongoDB returns a count. If the count is `1`, something was deleted. If the count is `0`, no matching document existed.
+
+The controller turns those outcomes into status codes:
+
+```text
+1 deleted -> 204
+0 deleted -> 404
+```
+
+### MongoDB Study Checklist
+
+You should be able to explain:
+
+- what a cluster is
+- what a database is
+- what a collection is
+- what a document is
+- why `_id` matters
+- why the connection string is secret
+- why Render needs network access
+- how POST, PUT, and DELETE change MongoDB
+
+If you can explain those ideas, MongoDB will feel much less mysterious.
+
+## Chapter 46: Render And GitHub Workbook
+
+Render runs the API online. GitHub stores the code. MongoDB stores the data. These three tools work together.
+
+```mermaid
+flowchart LR
+  GitHub[GitHub Repo] --> Render[Render Web Service]
+  Render --> Express[Node and Express App]
+  Express --> MongoDB[(MongoDB Atlas)]
+```
+
+The code moves from GitHub to Render. The API talks from Render to MongoDB.
+
+### Why Deployment Matters
+
+Localhost proves the app works on your computer.
+
+Render proves the app works on the web.
+
+The rubric says the video must show a published location, not only localhost. That is why the URL matters:
+
+```text
+https://cse341-contacts-api-y3jc.onrender.com
+```
+
+If the address says `localhost`, it is only your machine. If it says `onrender.com`, it is published.
+
+### Build Command
+
+Render needs to install packages.
+
+Build command:
+
+```text
+npm ci
+```
+
+This reads `package-lock.json` and installs the exact dependency versions.
+
+Some tutorials use:
+
+```text
+npm install
+```
+
+Both can work. `npm ci` is stricter and cleaner for deployment when a lockfile exists.
+
+### Start Command
+
+Render needs to start the app.
+
+Start command:
+
+```text
+npm start
+```
+
+That runs the `start` script in `package.json`:
+
+```json
+"start": "node src/server.js"
+```
+
+If Render cannot find a start command, the app will not stay online.
+
+### Environment Variables On Render
+
+Render environment variables are the production version of `.env`.
+
+For Contacts:
+
+```text
+MONGODB_URI
+DATABASE_NAME
+CONTACTS_COLLECTION
+USE_MEMORY_STORE
+```
+
+`MONGODB_URI` is the sensitive one. It includes the database user and password. It should not appear in GitHub.
+
+`DATABASE_NAME` is not very sensitive, but it still belongs in configuration because it can change between projects.
+
+`USE_MEMORY_STORE` should be false on Render because the rubric expects MongoDB.
+
+### What `render.yaml` Does
+
+The repo has a `render.yaml` file. That file tells Render how to create the services from GitHub.
+
+In plain language, it says:
+
+"Create a web service for the Contacts API and a web service for Project 2. Use Node. Build with npm. Start with npm. Ask for MongoDB secrets outside the repo."
+
+That is infrastructure as code. It means deployment settings are partly described in a file instead of only clicked in a dashboard.
+
+### How To Verify Render Is Using The Latest Code
+
+Check the live home route:
+
+```text
+https://cse341-contacts-api-y3jc.onrender.com
+```
+
+If it returns:
+
+```json
+{
+  "message": "Welcome to the CSE 341 Contacts API.",
+  "docs": "/api-docs",
+  "week01Routes": ["GET /contacts", "GET /contacts/:id"],
+  "week02Routes": ["POST /contacts", "PUT /contacts/:id", "DELETE /contacts/:id"]
+}
+```
+
+then the deployed app is serving the newer code.
+
+You can also check the Render dashboard deploy logs and compare the commit hash with GitHub.
+
+### GitHub Security Check
+
+Before submitting, look at GitHub and confirm these are not present:
+
+```text
+.env
+node_modules
+coverage
+npm-debug.log
+```
+
+It is okay to have:
+
+```text
+.env.example
+package.json
+package-lock.json
+```
+
+`.env.example` teaches the shape of the environment without exposing secrets.
+
+`package.json` and `package-lock.json` let someone recreate the dependency folder.
+
+### Render Troubleshooting
+
+If Render says the deploy failed, check:
+
+- Did the GitHub push finish?
+- Is `package.json` in the correct folder?
+- Is the service root directory correct?
+- Is `npm start` defined?
+- Does the app use `process.env.PORT`?
+- Is `MONGODB_URI` set on Render?
+- Does MongoDB Atlas allow Render to connect?
+
+If the app builds but the route gives a server error, check Render logs. Logs are where startup messages and database errors appear.
+
+### Render Study Statement
+
+You should be able to say:
+
+"GitHub stores my source code, Render pulls that code and runs it as a web service, and MongoDB Atlas stores the data. Secrets like `MONGODB_URI` are configured in Render environment variables instead of GitHub."
+
+That is a strong Week 01 and Week 02 explanation.
+
+## Chapter 47: Swagger Practice Workbook
+
+Swagger can feel like a fancy documentation page, but in this course it is also a testing tool. You can use Swagger to prove routes work in your video.
+
+### The Swagger Page
+
+Contacts Swagger:
+
+```text
+https://cse341-contacts-api-y3jc.onrender.com/api-docs
+```
+
+Project 2 Swagger:
+
+```text
+https://cse341-project2-crud-api-zoq8.onrender.com/api-docs
+```
+
+When you open Swagger, look for the route list. For Week 02, you need:
+
+```text
+GET /contacts
+POST /contacts
+GET /contacts/{id}
+PUT /contacts/{id}
+DELETE /contacts/{id}
+```
+
+### Testing GET All
+
+Click:
+
+```text
+GET /contacts
+```
+
+Then:
+
+```text
+Try it out -> Execute
+```
+
+Look for:
+
+- status `200`
+- a JSON array
+- five or more contacts
+- the required fields
+
+Say in your video:
+
+"This endpoint returns all contacts from MongoDB."
+
+### Testing GET By ID
+
+First, run `GET /contacts` and copy one `_id`.
+
+Then click:
+
+```text
+GET /contacts/{id}
+```
+
+Paste the id and execute.
+
+Look for:
+
+- status `200`
+- one JSON object
+- the same id
+
+Say:
+
+"This endpoint retrieves one contact by MongoDB ObjectId."
+
+### Testing POST
+
+Click:
+
+```text
+POST /contacts
+```
+
+Use a test body:
+
+```json
+{
+  "firstName": "Video",
+  "lastName": "Demo",
+  "email": "video.demo@example.com",
+  "favoriteColor": "yellow",
+  "birthday": "2000-06-20"
+}
+```
+
+Look for:
+
+- status `201`
+- a returned id
+
+Then check MongoDB to prove the record exists.
+
+### Testing PUT
+
+Use the id from POST.
+
+Click:
+
+```text
+PUT /contacts/{id}
+```
+
+Use:
+
+```json
+{
+  "firstName": "Video",
+  "lastName": "Updated",
+  "email": "video.updated@example.com",
+  "favoriteColor": "green",
+  "birthday": "2000-06-20"
+}
+```
+
+Look for:
+
+- status `204`
+- no response body
+
+Then check MongoDB to prove the record changed.
+
+### Testing DELETE
+
+Use the same id.
+
+Click:
+
+```text
+DELETE /contacts/{id}
+```
+
+Look for:
+
+- status `204`
+
+Then check MongoDB to prove the record is gone.
+
+### Testing Validation
+
+Use invalid data:
+
+```json
+{
+  "firstName": "",
+  "lastName": "Demo",
+  "email": "not-an-email",
+  "favoriteColor": "",
+  "birthday": "not-a-date"
+}
+```
+
+Look for:
+
+- status `400`
+- validation messages
+
+This proves the API rejects bad input.
+
+### Swagger Video Tip
+
+After each route, say what status code you expected and what status code you got.
+
+Example:
+
+"For POST, I expect status 201 because a record is created. Swagger shows 201, and MongoDB shows the new contact."
+
+That kind of narration makes the video easy to grade.
+
+## Chapter 48: Safe Change Workbook
+
+The best way to learn the course is to make small changes safely. This chapter gives a process you can repeat.
+
+### The Rule Of One Change
+
+Change one idea at a time.
+
+Good:
+
+```text
+Add phoneNumber to Contacts.
+```
+
+Too much at once:
+
+```text
+Add phoneNumber, add login, rename contacts, change database names, and redesign Swagger.
+```
+
+One change lets you understand cause and effect.
+
+### Example: Add `phoneNumber` To Contacts
+
+Files to update:
+
+```text
+src/middleware/validate.js
+src/controllers/contactController.js
+src/data/seedContacts.json
+swagger.json
+requests.rest
+src/app.test.js
+MongoDB existing documents
+```
+
+Why each file matters:
+
+- validation decides whether `phoneNumber` is required or optional
+- controller decides whether `phoneNumber` is saved
+- seed data supports local memory mode
+- Swagger documents the new field
+- REST examples show how to send it
+- tests prove it works
+- MongoDB data keeps the live database consistent
+
+### Step 1: Update The Official Field List
+
+In the Contacts controller, the official fields are:
+
+```js
+const CONTACT_FIELDS = ['firstName', 'lastName', 'email', 'favoriteColor', 'birthday'];
+```
+
+If `phoneNumber` should be saved, add it:
+
+```js
+const CONTACT_FIELDS = ['firstName', 'lastName', 'email', 'favoriteColor', 'birthday', 'phoneNumber'];
+```
+
+Plain-language meaning:
+
+"When saving contacts, include phoneNumber too."
+
+### Step 2: Update Validation
+
+If required:
+
+```js
+body('phoneNumber').trim().notEmpty().withMessage('phoneNumber is required.')
+```
+
+If optional:
+
+```js
+body('phoneNumber').optional().trim()
+```
+
+The decision matters. A required field means every POST and PUT must include it. An optional field means the API accepts contacts without it.
+
+### Step 3: Update Swagger
+
+Swagger should match the code. If the code accepts `phoneNumber`, the docs should show `phoneNumber`.
+
+Otherwise, users will not know the field exists.
+
+### Step 4: Update Tests
+
+Add `phoneNumber` to the test body and expect it in the response.
+
+Tests protect the change.
+
+### Step 5: Update MongoDB
+
+If the field is required, every existing live contact should get the new field. Otherwise, older records will no longer match the expected shape.
+
+### Step 6: Run Checks
+
+Run:
+
+```powershell
+.\check-all.ps1
+```
+
+Then test Swagger manually.
+
+### Safe Change Summary
+
+Every field change has a ripple:
+
+```mermaid
+flowchart LR
+  Field[New Field] --> Validation
+  Field --> Controller
+  Field --> SeedData[Seed Data]
+  Field --> Swagger
+  Field --> Tests
+  Field --> MongoDB
+```
+
+If you remember that ripple, you can change APIs confidently.
+
+## Chapter 49: Week 01, Week 02, And Week 03 Requirement Matrix
+
+This chapter maps requirements to evidence. This is useful before submission and before a video.
+
+### Week 01 Learning Activity
+
+Topic:
+
+```text
+Web Services, REST Clients, and Node Architecture
+```
+
+Evidence in the workspace:
+
+- Node.js projects exist
+- Express APIs exist
+- `package.json` files define scripts
+- projects use routes and JSON responses
+- the book explains web services and architecture
+
+What you should understand:
+
+- what a web service is
+- what Node does
+- what Express does
+- what a route is
+- what JSON is
+- how a client sends a request
+
+### Week 01 Individual Activity
+
+Requirement:
+
+```text
+Develop an API for the provided frontend.
+```
+
+Evidence:
+
+- `w01-individual-activity/server.js`
+- route: `GET /professional`
+- frontend files in `w01-individual-activity/frontend`
+- local boot check passes
+
+What to say:
+
+"The frontend calls `/professional`, and my backend returns the JSON fields the frontend needs."
+
+### Week 01 Contacts Part 1
+
+Requirements:
+
+- GET all contacts
+- GET one contact by id
+- deployed online
+- secrets not in GitHub
+- MVC architecture
+
+Evidence:
+
+- `GET /contacts`
+- `GET /contacts/:id`
+- Render URL
+- MongoDB Atlas data
+- `.gitignore`
+- `.env.example`
+- routes, controllers, data, and config folders
+
+### Week 02 Contacts Part 2
+
+Requirements:
+
+- GET all contacts
+- GET one contact by id
+- POST contact
+- PUT contact
+- DELETE contact
+- Swagger documentation
+- database updates
+- at least five contacts with required fields
+- deployed online
+- secrets not in GitHub
+- MVC architecture
+
+Evidence:
+
+- `contacts-api/swagger.json`
+- `/api-docs` live on Render
+- route tests pass
+- live CRUD test passed
+- MongoDB contains five contacts
+- Git does not track `.env`
+
+### Week 03 Project 2 Part 1
+
+Requirements:
+
+- API of your choice
+- at least two collections
+- one collection with seven or more fields
+- full CRUD
+- Swagger
+- validation
+- error handling
+- Render deployment
+- secrets protected
+
+Evidence:
+
+- `project2-crud-api`
+- collections: `books`, `authors`
+- books has nine fields
+- Swagger documents routes
+- validation middleware exists
+- error handler exists
+- Render URL works
+- tests pass
+
+### Matrix
+
+| Requirement | Evidence |
+| --- | --- |
+| Node/Express architecture | `server.js`, `app.js`, routes |
+| MongoDB connection | `database.js`, Render env vars |
+| GET all contacts | `GET /contacts` |
+| GET by id | `GET /contacts/:id` |
+| POST | `POST /contacts` |
+| PUT | `PUT /contacts/:id` |
+| DELETE | `DELETE /contacts/:id` |
+| Swagger | `/api-docs`, `swagger.json` |
+| Security | `.env` ignored, Render env vars |
+| MVC | routes/controllers/data/config split |
+| Project 2 two collections | books and authors |
+| Project 2 seven-field collection | books has nine fields |
+| Testing | Jest and Supertest tests |
+
+Use this matrix before submitting. If every row has visible proof, the submission story is strong.
+
+## Chapter 50: Personal Study Plan For Mastery
+
+Finishing the assignment is good. Understanding it is better. This study plan helps you turn the finished code into real skill.
+
+### Day 1: Read The Routes
+
+Open:
+
+```text
+contacts-api/src/routes/contactRoutes.js
+project2-crud-api/src/routes/bookRoutes.js
+project2-crud-api/src/routes/authorRoutes.js
+```
+
+For each route, say:
+
+- method
+- path
+- middleware
+- controller
+
+Example:
+
+"POST `/contacts` runs contact validation, sends validation errors if needed, then creates a contact."
+
+### Day 2: Read The Controllers
+
+Open:
+
+```text
+contacts-api/src/controllers/contactController.js
+project2-crud-api/src/controllers/makeCrudController.js
+```
+
+For each function, answer:
+
+- what store method is called?
+- what status code can be returned?
+- what happens when no record exists?
+- what happens when an error occurs?
+
+### Day 3: Read Validation
+
+Open:
+
+```text
+contacts-api/src/middleware/validate.js
+project2-crud-api/src/middleware/validate.js
+```
+
+Write one bad request for each rule.
+
+Examples:
+
+- blank first name
+- invalid email
+- impossible birthday
+- book with zero pages
+- rating above 5
+
+Then test them in Swagger and watch for `400`.
+
+### Day 4: Read The Data Stores
+
+Open:
+
+```text
+contacts-api/src/data/contactStore.js
+project2-crud-api/src/data/libraryStore.js
+```
+
+Find:
+
+- `findAll`
+- `findById`
+- `create`
+- `update`
+- `remove`
+
+Write a plain-language sentence for each.
+
+Example:
+
+"`remove` deletes one document by id and returns how many documents were deleted."
+
+### Day 5: Read Swagger
+
+Open:
+
+```text
+contacts-api/swagger.json
+project2-crud-api/swagger.json
+```
+
+For each route, compare Swagger to the Express route file.
+
+Ask:
+
+- does the path match?
+- does the method match?
+- does the request body match validation?
+- do the status codes match the controller?
+
+Swagger is only useful when it is honest.
+
+### Day 6: Run Tests
+
+Run:
+
+```powershell
+.\check-all.ps1
+```
+
+Then open individual tests:
+
+```text
+contacts-api/src/app.test.js
+project2-crud-api/src/app.test.js
+```
+
+Read each test out loud in plain language.
+
+### Day 7: Make One Safe Change
+
+Choose one small change:
+
+- add an optional field
+- improve a validation message
+- add a missing 404 test
+- add another seed record
+- add one Swagger example
+
+Make the change and run checks again.
+
+This is how you move from "the code works" to "I understand the code."
+
+### The Mindset
+
+You do not need to memorize every line. You need to know where to look.
+
+When you know:
+
+- routes are the map
+- controllers make response decisions
+- validation protects input
+- stores talk to data
+- config handles secrets and connections
+- Swagger explains the contract
+- tests protect behavior
+
+you can navigate almost any backend project in this course.
 
 ## Expansion Plan For The Full 90-Page Version
 
