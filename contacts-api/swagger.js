@@ -7,8 +7,8 @@ const doc = {
     title: 'CSE 341 Contacts API',
     description: 'Weeks 01-02 Contacts API documentation',
   },
-  host: 'localhost:8080',
-  schemes: ['http'],
+  host: 'cse341-contacts-api-y3jc.onrender.com',
+  schemes: ['https'],
 };
 
 swaggerAutogen('./swagger.generated.json', ['./src/routes/contactRoutes.js'], doc);

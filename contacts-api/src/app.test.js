@@ -41,10 +41,45 @@ describe('Contacts API routes', () => {
       email: 'mary.jackson@example.com',
       favoriteColor: 'red',
       birthday: '1921-04-09',
+      extraField: 'This should not be saved',
     });
 
     expect(response.status).toBe(201);
     expect(response.body).toHaveProperty('id');
+    expect(response.body.contact).not.toHaveProperty('extraField');
+  });
+
+  test('PUT /contacts/:id updates an existing contact', async () => {
+    const { app, store } = buildTestApp();
+    const contacts = await store.findAll();
+    const id = contacts[0]._id.toString();
+
+    const response = await request(app).put(`/contacts/${id}`).send({
+      firstName: 'Updated',
+      lastName: 'Person',
+      email: 'updated.person@example.com',
+      favoriteColor: 'teal',
+      birthday: '2000-01-01',
+      extraField: 'This should not be saved',
+    });
+
+    const updatedContact = await store.findById(id);
+
+    expect(response.status).toBe(204);
+    expect(updatedContact.firstName).toBe('Updated');
+    expect(updatedContact).not.toHaveProperty('extraField');
+  });
+
+  test('DELETE /contacts/:id removes an existing contact', async () => {
+    const { app, store } = buildTestApp();
+    const contacts = await store.findAll();
+    const id = contacts[0]._id.toString();
+
+    const response = await request(app).delete(`/contacts/${id}`);
+    const deletedContact = await store.findById(id);
+
+    expect(response.status).toBe(204);
+    expect(deletedContact).toBeNull();
   });
 
   test('POST /contacts rejects invalid data', async () => {

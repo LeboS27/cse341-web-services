@@ -7,7 +7,9 @@ const swaggerDocument = require('../swagger.json');
 const contactRoutes = require('./routes/contactRoutes');
 
 // createApp builds the Express application.
-// Keeping this separate from server.js makes the app easier to test later.
+// Keeping this separate from server.js keeps the MVC structure clear:
+// server.js starts the app, app.js wires the app together, and route files
+// decide which controller should answer each endpoint.
 function createApp({ store }) {
   const app = express();
 
@@ -24,11 +26,13 @@ function createApp({ store }) {
     res.json({
       message: 'Welcome to the CSE 341 Contacts API.',
       docs: '/api-docs',
-      routes: ['/contacts', '/contacts/:id'],
+      week01Routes: ['GET /contacts', 'GET /contacts/:id'],
+      week02Routes: ['POST /contacts', 'PUT /contacts/:id', 'DELETE /contacts/:id'],
     });
   });
 
-  // Give the routes access to the database store through app.locals.
+  // Give the routes access to the database store through app.locals. This keeps
+  // database code out of the route file and helps show the MVC separation.
   app.locals.store = store;
   app.use('/contacts', contactRoutes);
 

@@ -1,15 +1,19 @@
+@localBaseUrl = http://localhost:8080
+@renderBaseUrl = https://cse341-contacts-api-y3jc.onrender.com
+@baseUrl = {{renderBaseUrl}}
+
 ### Home route
-GET http://localhost:8080/
+GET {{baseUrl}}/
 
 ### Week 01 requirement: get all contacts
-GET http://localhost:8080/contacts
+GET {{baseUrl}}/contacts
 
 ### Week 01 requirement: get one contact
 ### Replace the id with a real _id returned from GET /contacts.
-GET http://localhost:8080/contacts/66f1f53b6b39b57b5a147901
+GET {{baseUrl}}/contacts/66f1f53b6b39b57b5a147901
 
 ### Week 02 requirement: create a contact
-POST http://localhost:8080/contacts
+POST {{baseUrl}}/contacts
 Content-Type: application/json
 
 {
@@ -22,7 +26,7 @@ Content-Type: application/json
 
 ### Week 02 requirement: update a contact
 ### Replace the id with a real _id returned from GET /contacts.
-PUT http://localhost:8080/contacts/66f1f53b6b39b57b5a147901
+PUT {{baseUrl}}/contacts/66f1f53b6b39b57b5a147901
 Content-Type: application/json
 
 {
@@ -35,10 +39,10 @@ Content-Type: application/json
 
 ### Week 02 requirement: delete a contact
 ### Replace the id with a real _id returned from GET /contacts.
-DELETE http://localhost:8080/contacts/66f1f53b6b39b57b5a147901
+DELETE {{baseUrl}}/contacts/66f1f53b6b39b57b5a147901
 
 ### Validation example: this should return status 400
-POST http://localhost:8080/contacts
+POST {{baseUrl}}/contacts
 Content-Type: application/json
 
 {

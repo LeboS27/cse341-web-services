@@ -11,8 +11,8 @@
       "description": "Local development"
     },
     {
-      "url": "https://your-render-app.onrender.com",
-      "description": "Replace this with your Render URL before recording the submission video"
+      "url": "https://cse341-contacts-api-y3jc.onrender.com",
+      "description": "Render deployment"
     }
   ],
   "paths": {
@@ -22,7 +22,17 @@
         "description": "Returns every contact from the contacts collection.",
         "responses": {
           "200": {
-            "description": "A list of contacts"
+            "description": "A list of contacts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Contact"
+                  }
+                }
+              }
+            }
           }
         }
       },
@@ -48,7 +58,14 @@
         },
         "responses": {
           "201": {
-            "description": "Contact created"
+            "description": "Contact created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatedContactResponse"
+                }
+              }
+            }
           },
           "400": {
             "description": "Validation failed"
@@ -67,7 +84,14 @@
         ],
         "responses": {
           "200": {
-            "description": "The requested contact"
+            "description": "The requested contact",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Contact"
+                }
+              }
+            }
           },
           "400": {
             "description": "Invalid ObjectId"
@@ -91,6 +115,13 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/ContactInput"
+              },
+              "example": {
+                "firstName": "Mary",
+                "lastName": "Jackson",
+                "email": "mary.jackson.updated@example.com",
+                "favoriteColor": "gold",
+                "birthday": "1921-04-09"
               }
             }
           }
@@ -143,6 +174,37 @@
       }
     },
     "schemas": {
+      "Contact": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "66f1f53b6b39b57b5a147901"
+          },
+          "firstName": {
+            "type": "string",
+            "example": "Ada"
+          },
+          "lastName": {
+            "type": "string",
+            "example": "Lovelace"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "ada.lovelace@example.com"
+          },
+          "favoriteColor": {
+            "type": "string",
+            "example": "blue"
+          },
+          "birthday": {
+            "type": "string",
+            "format": "date",
+            "example": "1815-12-10"
+          }
+        }
+      },
       "ContactInput": {
         "type": "object",
         "required": ["firstName", "lastName", "email", "favoriteColor", "birthday"],
@@ -168,6 +230,22 @@
             "type": "string",
             "format": "date",
             "example": "1815-12-10"
+          }
+        }
+      },
+      "CreatedContactResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Contact created successfully."
+          },
+          "id": {
+            "type": "string",
+            "example": "66f1f53b6b39b57b5a147901"
+          },
+          "contact": {
+            "$ref": "#/components/schemas/Contact"
           }
         }
       }

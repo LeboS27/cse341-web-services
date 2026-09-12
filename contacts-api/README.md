@@ -17,6 +17,22 @@ This project covers:
 - `swagger.json`: powers `/api-docs`.
 - `requests.rest`: request examples for the VS Code REST Client extension.
 
+## Live Links
+
+- Render API: <https://cse341-contacts-api-y3jc.onrender.com>
+- Swagger docs: <https://cse341-contacts-api-y3jc.onrender.com/api-docs>
+- GitHub repository: <https://github.com/LeboS27/cse341-web-services>
+
+## Rubric Proof
+
+- W01 GET all contacts: `GET /contacts`
+- W01 GET one contact by id: `GET /contacts/:id`
+- W01/W02 deployed location: Render URL above
+- W01/W02 security: real MongoDB credentials live in `.env` locally and Render environment variables online, not in GitHub
+- W01/W02 architecture: routes, controllers, database code, and server startup are in separate files
+- W02 Swagger: all five required endpoints are documented at `/api-docs`
+- W02 database: MongoDB has five contacts with `firstName`, `lastName`, `email`, `favoriteColor`, and `birthday`
+
 ## Required Environment Variables
 
 Copy `.env.example` to `.env`, then add your real MongoDB connection string.
