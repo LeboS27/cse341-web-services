@@ -3,7 +3,16 @@ const { makeCrudController } = require('../controllers/makeCrudController');
 const { authorRules, idRule, sendValidationErrors } = require('../middleware/validate');
 
 const router = express.Router();
-const controller = makeCrudController({ storeName: 'authors', itemName: 'Author' });
+
+// These are the official fields for the authors collection.
+// website is optional, but it is still allowed when a valid URL is provided.
+const authorFields = ['name', 'country', 'birthYear', 'primaryGenre', 'website'];
+
+const controller = makeCrudController({
+  storeName: 'authors',
+  itemName: 'Author',
+  allowedFields: authorFields,
+});
 
 // GET /authors returns every author.
 router.get('/', controller.getAll);

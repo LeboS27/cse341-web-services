@@ -19,23 +19,23 @@ const bookRules = [
   body('isbn').trim().notEmpty().withMessage('isbn is required.'),
   body('genre').trim().notEmpty().withMessage('genre is required.'),
   // Numeric fields use ranges so impossible values are rejected.
-  body('publishedYear').isInt({ min: 1000, max: 2100 }).withMessage('publishedYear must be a real year.'),
-  body('pages').isInt({ min: 1 }).withMessage('pages must be a positive number.'),
+  body('publishedYear').isInt({ min: 1000, max: 2100 }).withMessage('publishedYear must be a real year.').toInt(),
+  body('pages').isInt({ min: 1 }).withMessage('pages must be a positive number.').toInt(),
   body('language').trim().notEmpty().withMessage('language is required.'),
   // available is a true/false value, not text like "yes" or "no".
-  body('available').isBoolean().withMessage('available must be true or false.'),
+  body('available').isBoolean().withMessage('available must be true or false.').toBoolean(),
   // Rating is limited to a normal 0 to 5 scale.
-  body('rating').isFloat({ min: 0, max: 5 }).withMessage('rating must be between 0 and 5.'),
+  body('rating').isFloat({ min: 0, max: 5 }).withMessage('rating must be between 0 and 5.').toFloat(),
 ];
 
 const authorRules = [
   // Authors are a second collection, which satisfies the Project 2 requirement.
   body('name').trim().notEmpty().withMessage('name is required.'),
   body('country').trim().notEmpty().withMessage('country is required.'),
-  body('birthYear').isInt({ min: 1, max: 2100 }).withMessage('birthYear must be a real year.'),
+  body('birthYear').isInt({ min: 1, max: 2100 }).withMessage('birthYear must be a real year.').toInt(),
   body('primaryGenre').trim().notEmpty().withMessage('primaryGenre is required.'),
   // website is optional, but if it is present it should be a real URL.
-  body('website').optional({ values: 'falsy' }).isURL().withMessage('website must be a valid URL.'),
+  body('website').optional({ values: 'falsy' }).trim().isURL().withMessage('website must be a valid URL.'),
 ];
 
 // Send a clear 400 response when validation fails.

@@ -7,6 +7,14 @@ This is a library API with two MongoDB collections:
 
 The `books` collection has nine fields, so it satisfies the course rule that at least one collection should have seven or more fields.
 
+## Live Links
+
+- Render API: <https://cse341-project2-crud-api-zoq8.onrender.com>
+- Swagger docs: <https://cse341-project2-crud-api-zoq8.onrender.com/api-docs>
+- Books route: <https://cse341-project2-crud-api-zoq8.onrender.com/books>
+- Authors route: <https://cse341-project2-crud-api-zoq8.onrender.com/authors>
+- GitHub repository: <https://github.com/LeboS27/cse341-web-services>
+
 ## What Week 03 Requires
 
 - At least two collections.
@@ -16,6 +24,18 @@ The `books` collection has nine fields, so it satisfies the course rule that at 
 - Error handling with clear 400 or 500 responses.
 - Published API on Render.
 - No secrets pushed to GitHub.
+
+## Rubric Proof
+
+- Two collections: `books` and `authors`
+- Seven-or-more-field collection: `books` has nine fields
+- Full CRUD for books: `GET /books`, `GET /books/:id`, `POST /books`, `PUT /books/:id`, `DELETE /books/:id`
+- Full CRUD for authors: `GET /authors`, `GET /authors/:id`, `POST /authors`, `PUT /authors/:id`, `DELETE /authors/:id`
+- Swagger: `/api-docs`
+- Validation: POST and PUT routes check request bodies before saving
+- Error handling: invalid ids, missing records, bad data, and unexpected errors return JSON responses
+- Deployment: Render live links above
+- Security: real MongoDB credentials are stored in environment variables, not GitHub
 
 ## Run Locally
 

@@ -87,6 +87,7 @@ Part Five: Hands-On Workbook
 48. Safe Change Workbook
 49. Week 01, Week 02, And Week 03 Requirement Matrix
 50. Personal Study Plan For Mastery
+51. Project 2 Quality Upgrade Walkthrough
 
 ## Chapter 1: What Web Services Are
 
@@ -5096,6 +5097,291 @@ When you know:
 - tests protect behavior
 
 you can navigate almost any backend project in this course.
+
+## Chapter 51: Project 2 Quality Upgrade Walkthrough
+
+Project 2 is where you prove that you can design your own API, not only follow the Contacts assignment. The library API uses two collections:
+
+- `books`
+- `authors`
+
+The `books` collection has nine fields, which goes beyond the rule that at least one collection must have seven or more fields.
+
+This chapter explains the quality upgrades added to Project 2 and why they matter.
+
+### Why The Controller Factory Exists
+
+Books and authors both need the same basic route behavior:
+
+- get all
+- get one by id
+- create
+- update
+- delete
+
+Without a shared helper, the project would need two controller files with almost identical code. That is not terrible for two collections, but it becomes harder to maintain as a project grows.
+
+The project uses:
+
+```js
+const controller = makeCrudController({
+  storeName: 'books',
+  itemName: 'Book',
+  allowedFields: bookFields
+});
+```
+
+Plain-language reading:
+
+"Create a full CRUD controller for the books store. Use the word Book in messages, and only save fields from the official book field list."
+
+For authors:
+
+```js
+const controller = makeCrudController({
+  storeName: 'authors',
+  itemName: 'Author',
+  allowedFields: authorFields
+});
+```
+
+Plain-language reading:
+
+"Create a full CRUD controller for authors."
+
+This is an example of a useful abstraction. It removes repeated code while keeping the idea easy to explain.
+
+### Why Allowed Fields Matter
+
+When a client sends JSON, the client can send extra fields.
+
+Example:
+
+```json
+{
+  "title": "Clean Code",
+  "authorName": "Robert C. Martin",
+  "isbn": "9780132350884",
+  "genre": "Software Engineering",
+  "publishedYear": 2008,
+  "pages": 464,
+  "language": "English",
+  "available": true,
+  "rating": 4.7,
+  "randomExtraField": "I should not be saved"
+}
+```
+
+If the API saves the whole request body exactly as sent, then `randomExtraField` can end up in MongoDB. That makes the database shape messy.
+
+Project 2 now uses allowed field lists.
+
+Books:
+
+```js
+const bookFields = [
+  'title',
+  'authorName',
+  'isbn',
+  'genre',
+  'publishedYear',
+  'pages',
+  'language',
+  'available',
+  'rating'
+];
+```
+
+Authors:
+
+```js
+const authorFields = ['name', 'country', 'birthYear', 'primaryGenre', 'website'];
+```
+
+The controller uses the list to build the document that will be saved.
+
+Conceptual version:
+
+```js
+function buildItemFromBody(body) {
+  return allowedFields.reduce((item, field) => {
+    if (body[field] !== undefined && body[field] !== '') {
+      item[field] = body[field];
+    }
+    return item;
+  }, {});
+}
+```
+
+Plain-language reading:
+
+"Start with an empty object. For each official field, copy it from the request body only if it has a useful value."
+
+This keeps random extra fields out of MongoDB.
+
+### Why Type Cleaning Matters
+
+HTTP request bodies often arrive from forms or tools where numbers can look like strings.
+
+Example:
+
+```json
+{
+  "publishedYear": "2020",
+  "pages": "400",
+  "available": "false",
+  "rating": "4.2"
+}
+```
+
+The values are wrapped in quotes, so they are strings. But in the database, these values should be real types:
+
+- `publishedYear` should be a number
+- `pages` should be a number
+- `available` should be a boolean
+- `rating` should be a number
+
+The validation file now uses sanitizers:
+
+```js
+body('publishedYear').isInt({ min: 1000, max: 2100 }).withMessage('publishedYear must be a real year.').toInt()
+body('pages').isInt({ min: 1 }).withMessage('pages must be a positive number.').toInt()
+body('available').isBoolean().withMessage('available must be true or false.').toBoolean()
+body('rating').isFloat({ min: 0, max: 5 }).withMessage('rating must be between 0 and 5.').toFloat()
+```
+
+Plain-language reading:
+
+"Check that the value is acceptable, then convert it into the type the database should store."
+
+This is a small but important professional habit. Validation checks the data. Sanitizing cleans the data.
+
+### Why Tests Were Expanded
+
+Earlier Project 2 tests proved basic read behavior. The stronger version now tests full CRUD behavior.
+
+The test suite covers:
+
+- `GET /books`
+- `GET /books/:id`
+- `POST /books`
+- `PUT /books/:id`
+- `DELETE /books/:id`
+- invalid `POST /books`
+- `GET /authors`
+- `GET /authors/:id`
+- `POST /authors`
+- `PUT /authors/:id`
+- `DELETE /authors/:id`
+- invalid `POST /authors`
+
+That is a much stronger safety net.
+
+### Reading A Project 2 Create Test
+
+Example idea:
+
+```js
+test('POST /books creates a book and ignores extra fields', async () => {
+  const { app } = await buildTestApp();
+
+  const response = await request(app).post('/books').send(validBook({
+    extraField: 'This should not be saved'
+  }));
+
+  expect(response.status).toBe(201);
+  expect(response.body.book).not.toHaveProperty('extraField');
+});
+```
+
+Plain-language reading:
+
+"When a client creates a book and sends an extra field, the API should create the book but should not save the extra field."
+
+This test proves more than the route exists. It proves the route behaves carefully.
+
+### Reading A Project 2 Update Test
+
+Example idea:
+
+```js
+const response = await request(app).put(`/books/${id}`).send(validBook({
+  title: 'Updated Book',
+  publishedYear: '2020',
+  pages: '400',
+  available: 'false',
+  rating: '4.2'
+}));
+```
+
+This test intentionally sends numbers and booleans as strings. Then it checks that the saved item has clean types:
+
+```js
+expect(updatedBook.publishedYear).toBe(2020);
+expect(updatedBook.pages).toBe(400);
+expect(updatedBook.available).toBe(false);
+expect(updatedBook.rating).toBe(4.2);
+```
+
+Plain-language reading:
+
+"Even if the request sends string values, validation and sanitizing should store the clean versions."
+
+That is a useful real-world behavior.
+
+### Why Swagger Was Improved
+
+Project 2 Swagger now points to the real Render URL:
+
+```text
+https://cse341-project2-crud-api-zoq8.onrender.com
+```
+
+It also includes examples for books and authors. Examples matter because Swagger is not only documentation. In this course, Swagger is part of the video demonstration.
+
+If a Swagger page has no examples, the presenter has to type everything by hand. That creates room for typos. Good examples make the route easier to test correctly.
+
+### Project 2 Video Proof
+
+For Week 03, a strong video should show:
+
+- `GET /books`
+- `GET /books/{id}`
+- `POST /books`
+- `PUT /books/{id}`
+- `DELETE /books/{id}`
+- `GET /authors`
+- `GET /authors/{id}`
+- `POST /authors`
+- `PUT /authors/{id}`
+- `DELETE /authors/{id}`
+- one validation failure
+- MongoDB collections
+- Render URL
+- no secrets in GitHub
+
+If the video is too long, focus on proving the rubric. You can say:
+
+"The books and authors collections both have full CRUD routes documented in Swagger. I will demonstrate one full CRUD path for books, then show that authors has the same documented route set."
+
+That keeps the video focused while still showing coverage.
+
+### Project 2 Study Questions
+
+Ask yourself:
+
+- Why does Project 2 use two collections?
+- Which collection has seven or more fields?
+- Where are book validation rules?
+- Where are author validation rules?
+- Why does the controller factory receive `allowedFields`?
+- What status code means created?
+- What status code means updated with no body?
+- What status code means validation failed?
+- What status code means record not found?
+- How do tests prove route behavior?
+
+If you can answer those questions, Project 2 is no longer just code on disk. It is a system you understand.
 
 ## Expansion Plan For The Full 90-Page Version
 

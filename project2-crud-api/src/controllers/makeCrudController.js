@@ -1,10 +1,21 @@
 // This factory creates a controller for one collection.
 // We use it for both books and authors because the CRUD pattern is the same.
-function makeCrudController({ storeName, itemName }) {
+function makeCrudController({ storeName, itemName, allowedFields }) {
   // The app stores books and authors data stores in app.locals.
   // This helper picks the correct store for the current controller.
   function getStore(req) {
     return req.app.locals.store[storeName];
+  }
+
+  // Only save fields that belong to this collection.
+  // This keeps random extra request data out of MongoDB.
+  function buildItemFromBody(body) {
+    return allowedFields.reduce((item, field) => {
+      if (body[field] !== undefined && body[field] !== '') {
+        item[field] = body[field];
+      }
+      return item;
+    }, {});
   }
 
   return {
@@ -37,7 +48,7 @@ function makeCrudController({ storeName, itemName }) {
     async create(req, res, next) {
       try {
         // Create one new document after validation has already passed.
-        const item = await getStore(req).create(req.body);
+        const item = await getStore(req).create(buildItemFromBody(req.body));
         res.status(201).json({
           message: `${itemName} created successfully.`,
           id: item._id,
@@ -51,7 +62,7 @@ function makeCrudController({ storeName, itemName }) {
     async update(req, res, next) {
       try {
         // Replace one existing document. If no id matches, report 404.
-        const matchedCount = await getStore(req).update(req.params.id, req.body);
+        const matchedCount = await getStore(req).update(req.params.id, buildItemFromBody(req.body));
         if (matchedCount === 0) {
           return res.status(404).json({
             error: `${itemName} not found`,

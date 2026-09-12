@@ -11,73 +11,199 @@
       "description": "Local development"
     },
     {
-      "url": "https://your-render-app.onrender.com",
-      "description": "Replace this with your Render URL"
+      "url": "https://cse341-project2-crud-api-zoq8.onrender.com",
+      "description": "Render deployment"
     }
   ],
   "paths": {
     "/books": {
-      "get": { "summary": "Get all books", "responses": { "200": { "description": "List of books" } } },
+      "get": {
+        "summary": "Get all books",
+        "description": "Returns every book from the books collection.",
+        "responses": {
+          "200": {
+            "description": "List of books",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Book" }
+                }
+              }
+            }
+          }
+        }
+      },
       "post": {
         "summary": "Create a book",
         "requestBody": {
           "required": true,
-          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/BookInput" } } }
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/BookInput" },
+              "example": {
+                "title": "The Pragmatic Programmer",
+                "authorName": "David Thomas and Andrew Hunt",
+                "isbn": "9780135957059",
+                "genre": "Software Engineering",
+                "publishedYear": 2019,
+                "pages": 352,
+                "language": "English",
+                "available": true,
+                "rating": 4.8
+              }
+            }
+          }
         },
-        "responses": { "201": { "description": "Book created" }, "400": { "description": "Validation failed" } }
+        "responses": {
+          "201": {
+            "description": "Book created",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/CreatedBookResponse" }
+              }
+            }
+          },
+          "400": { "description": "Validation failed" }
+        }
       }
     },
     "/books/{id}": {
       "get": {
         "summary": "Get one book",
         "parameters": [{ "$ref": "#/components/parameters/Id" }],
-        "responses": { "200": { "description": "Book found" }, "404": { "description": "Book not found" } }
+        "responses": {
+          "200": {
+            "description": "Book found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Book" }
+              }
+            }
+          },
+          "400": { "description": "Invalid ObjectId" },
+          "404": { "description": "Book not found" }
+        }
       },
       "put": {
         "summary": "Update one book",
         "parameters": [{ "$ref": "#/components/parameters/Id" }],
         "requestBody": {
           "required": true,
-          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/BookInput" } } }
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/BookInput" },
+              "example": {
+                "title": "Clean Code",
+                "authorName": "Robert C. Martin",
+                "isbn": "9780132350884",
+                "genre": "Software Engineering",
+                "publishedYear": 2008,
+                "pages": 464,
+                "language": "English",
+                "available": false,
+                "rating": 4.6
+              }
+            }
+          }
         },
         "responses": { "204": { "description": "Book updated" }, "400": { "description": "Validation failed" }, "404": { "description": "Book not found" } }
       },
       "delete": {
         "summary": "Delete one book",
         "parameters": [{ "$ref": "#/components/parameters/Id" }],
-        "responses": { "204": { "description": "Book deleted" }, "404": { "description": "Book not found" } }
+        "responses": { "204": { "description": "Book deleted" }, "400": { "description": "Invalid ObjectId" }, "404": { "description": "Book not found" } }
       }
     },
     "/authors": {
-      "get": { "summary": "Get all authors", "responses": { "200": { "description": "List of authors" } } },
+      "get": {
+        "summary": "Get all authors",
+        "description": "Returns every author from the authors collection.",
+        "responses": {
+          "200": {
+            "description": "List of authors",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Author" }
+                }
+              }
+            }
+          }
+        }
+      },
       "post": {
         "summary": "Create an author",
         "requestBody": {
           "required": true,
-          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/AuthorInput" } } }
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/AuthorInput" },
+              "example": {
+                "name": "David Thomas",
+                "country": "United States",
+                "birthYear": 1956,
+                "primaryGenre": "Software Engineering",
+                "website": "https://pragprog.com"
+              }
+            }
+          }
         },
-        "responses": { "201": { "description": "Author created" }, "400": { "description": "Validation failed" } }
+        "responses": {
+          "201": {
+            "description": "Author created",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/CreatedAuthorResponse" }
+              }
+            }
+          },
+          "400": { "description": "Validation failed" }
+        }
       }
     },
     "/authors/{id}": {
       "get": {
         "summary": "Get one author",
         "parameters": [{ "$ref": "#/components/parameters/Id" }],
-        "responses": { "200": { "description": "Author found" }, "404": { "description": "Author not found" } }
+        "responses": {
+          "200": {
+            "description": "Author found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Author" }
+              }
+            }
+          },
+          "400": { "description": "Invalid ObjectId" },
+          "404": { "description": "Author not found" }
+        }
       },
       "put": {
         "summary": "Update one author",
         "parameters": [{ "$ref": "#/components/parameters/Id" }],
         "requestBody": {
           "required": true,
-          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/AuthorInput" } } }
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/AuthorInput" },
+              "example": {
+                "name": "Updated Author",
+                "country": "United States",
+                "birthYear": 1970,
+                "primaryGenre": "Technical Writing",
+                "website": "https://example.com"
+              }
+            }
+          }
         },
         "responses": { "204": { "description": "Author updated" }, "400": { "description": "Validation failed" }, "404": { "description": "Author not found" } }
       },
       "delete": {
         "summary": "Delete one author",
         "parameters": [{ "$ref": "#/components/parameters/Id" }],
-        "responses": { "204": { "description": "Author deleted" }, "404": { "description": "Author not found" } }
+        "responses": { "204": { "description": "Author deleted" }, "400": { "description": "Invalid ObjectId" }, "404": { "description": "Author not found" } }
       }
     }
   },
@@ -92,30 +218,72 @@
       }
     },
     "schemas": {
+      "Book": {
+        "type": "object",
+        "properties": {
+          "_id": { "type": "string", "example": "66f1f53b6b39b57b5a147901" },
+          "title": { "type": "string", "example": "Clean Code" },
+          "authorName": { "type": "string", "example": "Robert C. Martin" },
+          "isbn": { "type": "string", "example": "9780132350884" },
+          "genre": { "type": "string", "example": "Software Engineering" },
+          "publishedYear": { "type": "integer", "example": 2008 },
+          "pages": { "type": "integer", "example": 464 },
+          "language": { "type": "string", "example": "English" },
+          "available": { "type": "boolean", "example": true },
+          "rating": { "type": "number", "example": 4.7 }
+        }
+      },
       "BookInput": {
         "type": "object",
         "required": ["title", "authorName", "isbn", "genre", "publishedYear", "pages", "language", "available", "rating"],
         "properties": {
-          "title": { "type": "string" },
-          "authorName": { "type": "string" },
-          "isbn": { "type": "string" },
-          "genre": { "type": "string" },
-          "publishedYear": { "type": "integer" },
-          "pages": { "type": "integer" },
-          "language": { "type": "string" },
-          "available": { "type": "boolean" },
-          "rating": { "type": "number" }
+          "title": { "type": "string", "example": "Clean Code" },
+          "authorName": { "type": "string", "example": "Robert C. Martin" },
+          "isbn": { "type": "string", "example": "9780132350884" },
+          "genre": { "type": "string", "example": "Software Engineering" },
+          "publishedYear": { "type": "integer", "example": 2008 },
+          "pages": { "type": "integer", "example": 464 },
+          "language": { "type": "string", "example": "English" },
+          "available": { "type": "boolean", "example": true },
+          "rating": { "type": "number", "example": 4.7 }
+        }
+      },
+      "CreatedBookResponse": {
+        "type": "object",
+        "properties": {
+          "message": { "type": "string", "example": "Book created successfully." },
+          "id": { "type": "string", "example": "66f1f53b6b39b57b5a147901" },
+          "book": { "$ref": "#/components/schemas/Book" }
+        }
+      },
+      "Author": {
+        "type": "object",
+        "properties": {
+          "_id": { "type": "string", "example": "66f1f53b6b39b57b5a147902" },
+          "name": { "type": "string", "example": "Robert C. Martin" },
+          "country": { "type": "string", "example": "United States" },
+          "birthYear": { "type": "integer", "example": 1952 },
+          "primaryGenre": { "type": "string", "example": "Software Engineering" },
+          "website": { "type": "string", "format": "uri", "example": "https://cleancoder.com" }
         }
       },
       "AuthorInput": {
         "type": "object",
         "required": ["name", "country", "birthYear", "primaryGenre"],
         "properties": {
-          "name": { "type": "string" },
-          "country": { "type": "string" },
-          "birthYear": { "type": "integer" },
-          "primaryGenre": { "type": "string" },
-          "website": { "type": "string", "format": "uri" }
+          "name": { "type": "string", "example": "Robert C. Martin" },
+          "country": { "type": "string", "example": "United States" },
+          "birthYear": { "type": "integer", "example": 1952 },
+          "primaryGenre": { "type": "string", "example": "Software Engineering" },
+          "website": { "type": "string", "format": "uri", "example": "https://cleancoder.com" }
+        }
+      },
+      "CreatedAuthorResponse": {
+        "type": "object",
+        "properties": {
+          "message": { "type": "string", "example": "Author created successfully." },
+          "id": { "type": "string", "example": "66f1f53b6b39b57b5a147902" },
+          "author": { "$ref": "#/components/schemas/Author" }
         }
       }
     }

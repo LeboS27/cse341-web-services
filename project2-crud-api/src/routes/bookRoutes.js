@@ -3,7 +3,16 @@ const { makeCrudController } = require('../controllers/makeCrudController');
 const { bookRules, idRule, sendValidationErrors } = require('../middleware/validate');
 
 const router = express.Router();
-const controller = makeCrudController({ storeName: 'books', itemName: 'Book' });
+
+// These are the official fields for the books collection.
+// The controller uses this list so extra request fields are not saved.
+const bookFields = ['title', 'authorName', 'isbn', 'genre', 'publishedYear', 'pages', 'language', 'available', 'rating'];
+
+const controller = makeCrudController({
+  storeName: 'books',
+  itemName: 'Book',
+  allowedFields: bookFields,
+});
 
 // GET /books returns every book.
 router.get('/', controller.getAll);

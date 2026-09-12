@@ -1,14 +1,24 @@
+@localBaseUrl = http://localhost:8081
+@renderBaseUrl = https://cse341-project2-crud-api-zoq8.onrender.com
+@baseUrl = {{renderBaseUrl}}
+
 ### Home route
-GET http://localhost:8081/
+GET {{baseUrl}}/
 
 ### Get all books
-GET http://localhost:8081/books
+GET {{baseUrl}}/books
+
+### Replace the id with a real _id returned from GET /books
+GET {{baseUrl}}/books/66f1f53b6b39b57b5a147901
 
 ### Get all authors
-GET http://localhost:8081/authors
+GET {{baseUrl}}/authors
+
+### Replace the id with a real _id returned from GET /authors
+GET {{baseUrl}}/authors/66f1f53b6b39b57b5a147902
 
 ### Create a book
-POST http://localhost:8081/books
+POST {{baseUrl}}/books
 Content-Type: application/json
 
 {
@@ -24,7 +34,7 @@ Content-Type: application/json
 }
 
 ### Create an author
-POST http://localhost:8081/authors
+POST {{baseUrl}}/authors
 Content-Type: application/json
 
 {
@@ -35,8 +45,9 @@ Content-Type: application/json
   "website": "https://pragprog.com"
 }
 
-### Replace :id with a real id returned from GET /books
-PUT http://localhost:8081/books/:id
+### Update a book
+### Replace the id with a real _id returned from GET /books.
+PUT {{baseUrl}}/books/66f1f53b6b39b57b5a147901
 Content-Type: application/json
 
 {
@@ -51,5 +62,39 @@ Content-Type: application/json
   "rating": 4.6
 }
 
-### Replace :id with a real id returned from GET /authors
-DELETE http://localhost:8081/authors/:id
+### Delete a book
+### Replace the id with a real _id returned from GET /books.
+DELETE {{baseUrl}}/books/66f1f53b6b39b57b5a147901
+
+### Update an author
+### Replace the id with a real _id returned from GET /authors.
+PUT {{baseUrl}}/authors/66f1f53b6b39b57b5a147902
+Content-Type: application/json
+
+{
+  "name": "Updated Author",
+  "country": "United States",
+  "birthYear": 1970,
+  "primaryGenre": "Technical Writing",
+  "website": "https://example.com"
+}
+
+### Delete an author
+### Replace the id with a real _id returned from GET /authors.
+DELETE {{baseUrl}}/authors/66f1f53b6b39b57b5a147902
+
+### Validation example: this should return status 400
+POST {{baseUrl}}/books
+Content-Type: application/json
+
+{
+  "title": "",
+  "authorName": "",
+  "isbn": "",
+  "genre": "",
+  "publishedYear": 999,
+  "pages": 0,
+  "language": "",
+  "available": "maybe",
+  "rating": 9
+}
