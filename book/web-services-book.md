@@ -2702,9 +2702,1057 @@ The exact code may change from project to project, but the concepts remain:
 
 That is the heart of CSE 341.
 
+## Part Four: Deeper Course Expansion
+
+The earlier chapters gave the main path through the projects. This part slows down and studies the ideas again from another angle. The goal is to help you become comfortable enough to explain the work, change it, and debug it without feeling lost.
+
+## Chapter 36: Week 04 OAuth In Plain Language
+
+Week 04 introduces OAuth. This is often the first topic in the course that feels larger than a normal route, because OAuth is not just one function. It is a conversation between several systems.
+
+In simple language, OAuth lets a user sign in through a trusted identity provider. Your app does not need to store the user's password. Instead, the provider proves that the user signed in.
+
+The main players are:
+
+- The user, who wants to use your app.
+- Your app, which needs to know who the user is.
+- The OAuth provider, such as GitHub or Google.
+- The protected route, which should only work after login.
+
+The simplest mental picture is this:
+
+```mermaid
+sequenceDiagram
+  participant User
+  participant App as Your Express App
+  participant Provider as OAuth Provider
+  participant API as Protected API Route
+  User->>App: Click login
+  App->>Provider: Send user to provider
+  Provider->>User: Ask user to approve login
+  User->>Provider: Approve
+  Provider->>App: Send proof of login
+  App->>API: Allow protected request
+```
+
+The important thing is that your app is not asking the user for their provider password. If you use GitHub OAuth, GitHub handles GitHub passwords. Your app only receives proof that GitHub approved the login.
+
+### Authentication Compared With Authorization
+
+Authentication asks:
+
+"Who are you?"
+
+Authorization asks:
+
+"What are you allowed to do?"
+
+These two words are close, but they are not the same.
+
+Example:
+
+```text
+Authentication: The app knows this is Lebohang.
+Authorization: Lebohang is allowed to create, update, and delete records.
+```
+
+In a class project, you might protect POST, PUT, and DELETE because those routes change the database. You might leave GET routes public because anyone can read the data. Another project might protect everything.
+
+This is a design decision. The course wants you to show that you understand the decision and can demonstrate it.
+
+### How This Relates To The Contacts API
+
+The Contacts API for Weeks 01 and 02 does not require OAuth. That is good, because it lets you learn CRUD first. If you added OAuth later, the project structure would make it easier.
+
+Right now, the route file says:
+
+```js
+router.post('/', contactRules, sendValidationErrors, controller.createContact);
+router.put('/:id', idRule, contactRules, sendValidationErrors, controller.updateContact);
+router.delete('/:id', idRule, sendValidationErrors, controller.deleteContact);
+```
+
+If this were a Week 04 protected API, you could add an authentication middleware:
+
+```js
+router.post('/', requireLogin, contactRules, sendValidationErrors, controller.createContact);
+router.put('/:id', requireLogin, idRule, contactRules, sendValidationErrors, controller.updateContact);
+router.delete('/:id', requireLogin, idRule, sendValidationErrors, controller.deleteContact);
+```
+
+Read that in plain English:
+
+"Before a user can create, update, or delete contacts, check whether the user is logged in. If the user is logged in, continue to validation and the controller."
+
+This is why middleware matters. Middleware gives you checkpoints between the request and the final controller.
+
+### What A Login Middleware Does
+
+A login middleware has one main job: decide whether the request should continue.
+
+Conceptual example:
+
+```js
+function requireLogin(req, res, next) {
+  if (!req.user) {
+    return res.status(401).json({
+      error: 'Unauthorized',
+      message: 'You must log in before using this route.'
+    });
+  }
+
+  return next();
+}
+```
+
+This does not show the full OAuth setup. It shows the key idea. If there is no logged-in user, stop the request. If there is a logged-in user, call `next()` and let the request continue.
+
+The word `next` means "move to the next step in the Express chain."
+
+### OAuth And Swagger
+
+Swagger becomes more important when routes are protected. A normal route can be tested immediately. A protected route needs some kind of login or token first.
+
+Swagger can document security so users understand which routes are protected.
+
+A simplified security section might look like this:
+
+```json
+{
+  "components": {
+    "securitySchemes": {
+      "OAuth2": {
+        "type": "oauth2",
+        "flows": {
+          "authorizationCode": {
+            "authorizationUrl": "https://github.com/login/oauth/authorize",
+            "tokenUrl": "https://github.com/login/oauth/access_token",
+            "scopes": {}
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+Do not memorize every symbol yet. Focus on the meaning:
+
+- Swagger knows the route uses OAuth.
+- Swagger knows where login starts.
+- Swagger knows where a token can be exchanged.
+- Swagger can help users test protected routes.
+
+For a video, you would show one route failing before login and succeeding after login.
+
+### JWTs In The Same Conversation
+
+The course introduces JWTs as an extra concept. JWT means JSON Web Token. A token is a small string that carries information. A signed token can prove that it came from a trusted source.
+
+A JWT often has claims. A claim is a fact.
+
+Example claims:
+
+```json
+{
+  "sub": "user-123",
+  "email": "student@example.com",
+  "role": "student"
+}
+```
+
+In plain language:
+
+"This token says the user id is user-123, the email is student@example.com, and the role is student."
+
+You do not need to make JWTs the center of the course project unless the assignment asks for it. The key lesson is that modern login systems often use tokens behind the scenes.
+
+### Week 04 Practice Questions
+
+Ask yourself:
+
+- Which routes should be public?
+- Which routes should require login?
+- What should happen if a user is not logged in?
+- Should a normal user be allowed to delete records?
+- What will I show in Swagger to prove the route is protected?
+
+Strong answer:
+
+"I protected the write routes because they change the database. A user can read public data, but creating, updating, and deleting require login. If a user is not logged in, the API returns 401."
+
+That answer shows both technical knowledge and judgment.
+
+## Chapter 37: Designing Protected Routes
+
+Protected routes are routes with a locked door in front of them. The controller still does the normal work, but only after a middleware says the request is allowed.
+
+Without protection:
+
+```mermaid
+flowchart LR
+  Request[Request] --> Validation[Validation]
+  Validation --> Controller[Controller]
+  Controller --> Mongo[(MongoDB)]
+```
+
+With protection:
+
+```mermaid
+flowchart LR
+  Request[Request] --> Auth[Check Login]
+  Auth -->|Not logged in| Reject[401 Unauthorized]
+  Auth -->|Logged in| Validation[Validation]
+  Validation --> Controller[Controller]
+  Controller --> Mongo[(MongoDB)]
+```
+
+This is not only a security pattern. It is a thinking pattern. You are deciding which steps must happen before the app trusts a request.
+
+### Good Routes To Protect
+
+Routes that change data are usually good candidates for protection:
+
+```http
+POST /contacts
+PUT /contacts/:id
+DELETE /contacts/:id
+```
+
+Routes that only read data may or may not be protected:
+
+```http
+GET /contacts
+GET /contacts/:id
+```
+
+It depends on the project. A public library catalog might let everyone read books. A private medical app would protect every route.
+
+### Status Codes For Protected Routes
+
+Two status codes matter a lot:
+
+- `401 Unauthorized`: the user is not logged in or did not provide valid proof.
+- `403 Forbidden`: the user is logged in, but is not allowed to do this action.
+
+Example:
+
+```text
+401: I do not know who you are.
+403: I know who you are, but you cannot do this.
+```
+
+This difference is small but professional. It helps clients respond correctly.
+
+### Where To Put Auth Code
+
+Do not put the login check inside every controller if you can avoid it. Use middleware.
+
+Less clean:
+
+```js
+async function deleteContact(req, res, next) {
+  if (!req.user) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  // delete logic continues here
+}
+```
+
+Cleaner:
+
+```js
+router.delete('/:id', requireLogin, idRule, sendValidationErrors, controller.deleteContact);
+```
+
+The route line becomes a story:
+
+"For DELETE by id, require login, validate the id, send errors if needed, then delete."
+
+That is readable. Readable code is easier to grade and easier to maintain.
+
+### A Protected Route Checklist
+
+Before you call a protected route finished, check:
+
+- The route fails when not logged in.
+- The route succeeds when logged in.
+- Swagger explains that the route is protected.
+- The video shows both states.
+- The secret values used for OAuth are not in GitHub.
+- The controller still has one main job.
+
+This matches the style of the first projects. The course is not asking for mystery. It is asking for visible proof that your API behaves correctly.
+
+## Chapter 38: Week 05 API Gateways And Managers
+
+Week 05 introduces API gateways and managers. This topic matters because the course projects start as one API, but real systems often grow into many services.
+
+An API gateway sits between clients and backend services.
+
+Without a gateway:
+
+```mermaid
+flowchart LR
+  Frontend[Frontend] --> Contacts[Contacts API]
+  Frontend --> Books[Books API]
+  Frontend --> Users[Users API]
+  Frontend --> Payments[Payments API]
+```
+
+With a gateway:
+
+```mermaid
+flowchart LR
+  Frontend[Frontend] --> Gateway[API Gateway]
+  Gateway --> Contacts[Contacts API]
+  Gateway --> Books[Books API]
+  Gateway --> Users[Users API]
+  Gateway --> Payments[Payments API]
+```
+
+The frontend talks to one front door. The gateway sends each request to the right service.
+
+### What A Gateway Can Do
+
+An API gateway can help with:
+
+- routing
+- authentication checks
+- rate limiting
+- logging
+- monitoring
+- request and response shaping
+- versioning
+
+Routing means the gateway decides where a request goes.
+
+Example:
+
+```text
+/contacts -> Contacts API
+/books -> Library API
+/users -> User API
+```
+
+Rate limiting means controlling how many requests a client can make.
+
+Example:
+
+```text
+This client can make 100 requests per minute.
+```
+
+Logging means recording what happened:
+
+```text
+GET /contacts returned 200 in 72ms
+POST /books returned 400 in 19ms
+```
+
+Monitoring means watching the system for health problems.
+
+### Why Small Projects Usually Do Not Need A Gateway
+
+Your CSE 341 projects can run directly on Render. That is the right level for the assignment. Adding a gateway too early would make the project harder without helping the rubric.
+
+The Contacts API is simple:
+
+```text
+Browser or Swagger -> Render Express API -> MongoDB
+```
+
+That is enough for Weeks 01 and 02.
+
+Project 2 is also simple:
+
+```text
+Swagger -> Render Library API -> MongoDB books/authors
+```
+
+That is enough for Week 03.
+
+The purpose of Week 05 is not to force a gateway into your small app. The purpose is to understand when a gateway becomes useful.
+
+### When A Gateway Starts To Make Sense
+
+A gateway becomes useful when:
+
+- many frontends need the same APIs
+- many APIs need the same login rules
+- traffic is high enough to need rate limits
+- one public URL should hide many internal services
+- the team needs central logs and monitoring
+- older and newer API versions must run together
+
+Example:
+
+```text
+Mobile app -> Gateway -> v1 Orders API
+Web app -> Gateway -> v2 Orders API
+Admin app -> Gateway -> Internal Reports API
+```
+
+The gateway becomes the traffic organizer.
+
+### Gateway Thinking For Your Current APIs
+
+Imagine combining the Contacts API and Project 2 API behind one gateway:
+
+```text
+https://api.example.com/contacts
+https://api.example.com/books
+https://api.example.com/authors
+```
+
+Behind the scenes:
+
+```text
+/contacts -> cse341-contacts-api-y3jc.onrender.com
+/books -> cse341-project2-crud-api-zoq8.onrender.com
+/authors -> cse341-project2-crud-api-zoq8.onrender.com
+```
+
+The user does not need to know which service handles which resource. The gateway hides that complexity.
+
+### Week 05 Interview Answer
+
+If someone asks, "What is an API gateway?" you can say:
+
+"An API gateway is a front layer between clients and backend services. It can route requests, apply shared security rules, limit traffic, and collect logs. In a small class project I can call Express directly, but in a larger system a gateway keeps many services organized behind one public interface."
+
+That answer is enough to show real understanding.
+
+## Chapter 39: Week 06 Testing More Deeply
+
+Week 06 focuses on testing with Jest. Testing is the habit that lets you change code without guessing.
+
+In the projects, there are two kinds of proof:
+
+- manual proof, such as Swagger and the browser
+- automated proof, such as Jest and Supertest
+
+Manual proof is good for videos. Automated proof is good for repeated confidence.
+
+### What Jest Does
+
+Jest runs tests and reports whether expectations passed.
+
+A tiny test looks like this:
+
+```js
+test('two plus two is four', () => {
+  expect(2 + 2).toBe(4);
+});
+```
+
+That is not an API test, but it teaches the shape:
+
+- `test` names the behavior.
+- `expect` states the expected result.
+- Jest tells you whether the result matched.
+
+### What Supertest Does
+
+Supertest sends requests to an Express app during tests.
+
+Example from the Contacts API idea:
+
+```js
+const response = await request(app).get('/contacts');
+
+expect(response.status).toBe(200);
+expect(response.body).toHaveLength(5);
+```
+
+Plain-language reading:
+
+"Call GET /contacts. The API should return status 200 and five contacts."
+
+Supertest is useful because it tests the real route chain:
+
+```text
+Express app -> route -> validation middleware -> controller -> store -> response
+```
+
+It is not just testing one small helper function. It is testing how the pieces work together.
+
+### Why The Tests Use Memory Mode
+
+The Contacts tests use `MemoryContactStore`.
+
+That means:
+
+- tests do not need the internet
+- tests do not need a MongoDB password
+- tests do not change the real course database
+- every test starts from predictable seed data
+
+This is a professional testing idea. Tests should be repeatable. A test that depends on a live database can fail for reasons that have nothing to do with your code.
+
+For example, a live MongoDB test might fail because:
+
+- the cluster is paused
+- the password changed
+- the IP address is blocked
+- another test deleted a record
+- Render is asleep
+
+Memory mode removes those distractions.
+
+### What The Contacts Tests Prove
+
+The Contacts API tests prove:
+
+- `GET /contacts` returns the seed contacts
+- `GET /contacts/:id` returns one contact
+- `POST /contacts` creates a contact
+- `PUT /contacts/:id` updates a contact
+- `DELETE /contacts/:id` removes a contact
+- invalid POST data returns `400`
+
+That lines up well with Week 02 because Week 02 cares about all five CRUD endpoints and database updates. The live database proof still happens in the video, but the tests prove the route behavior in code.
+
+### What Tests Do Not Prove
+
+Tests are strong, but they do not prove everything.
+
+The local Contacts tests do not prove:
+
+- Render is deployed
+- MongoDB Atlas is reachable
+- YouTube video is viewable
+- Canvas links are pasted correctly
+- the grader can access a private repo
+
+That is why the submission checklist still matters.
+
+This is a healthy mindset: tests are evidence, not magic.
+
+### Good API Test Names
+
+A good test name reads like a promise.
+
+Good:
+
+```js
+test('POST /contacts creates a new contact', async () => {
+  // test code
+});
+```
+
+Weak:
+
+```js
+test('test 3', async () => {
+  // test code
+});
+```
+
+The name should help you understand what broke.
+
+If the test fails, the terminal can say:
+
+```text
+POST /contacts creates a new contact
+```
+
+That is useful. You know exactly where to look.
+
+### Arrange, Act, Assert
+
+Most tests have three parts.
+
+Arrange:
+
+```js
+const { app } = buildTestApp();
+```
+
+Act:
+
+```js
+const response = await request(app).get('/contacts');
+```
+
+Assert:
+
+```js
+expect(response.status).toBe(200);
+```
+
+In plain language:
+
+1. Set up the world.
+2. Do the thing.
+3. Check what happened.
+
+This pattern keeps tests easy to read.
+
+### Week 06 Practice Task
+
+Add a test for a missing contact.
+
+Expected behavior:
+
+```text
+GET /contacts/validButMissingId should return 404
+```
+
+To do that, you need a valid ObjectId that does not exist in the memory store.
+
+Example:
+
+```js
+test('GET /contacts/:id returns 404 when the contact is missing', async () => {
+  const { app } = buildTestApp();
+
+  const response = await request(app).get('/contacts/507f1f77bcf86cd799439011');
+
+  expect(response.status).toBe(404);
+});
+```
+
+This is a good learning test because it checks a real user problem: asking for something that is not there.
+
+## Chapter 40: Week 07 Resume And Interview Preparation
+
+Week 07 turns your project work into professional language. This is important because a project only helps your career if you can explain it.
+
+The course gives interview questions about Node, Express, MVC, MongoDB, HTTP, middleware, validation, testing, and risk. These are not random. They are the vocabulary behind the work you just built.
+
+### Turning Course Work Into Resume Bullets
+
+A weak resume bullet says:
+
+```text
+Made API for class.
+```
+
+A stronger bullet says:
+
+```text
+Built and deployed a Node.js and Express REST API with MongoDB persistence, Swagger documentation, input validation, and Jest/Supertest route tests.
+```
+
+That bullet is stronger because it names tools and outcomes.
+
+Another option:
+
+```text
+Implemented CRUD endpoints for contacts, books, and authors using MVC-style route, controller, validation, and data-access layers.
+```
+
+That bullet shows architecture.
+
+### Interview Story For The Contacts API
+
+A strong interview answer might sound like this:
+
+"I built a Contacts API with Node.js, Express, and MongoDB. The first version supported GET all contacts and GET one contact by id. Then I expanded it to full CRUD with POST, PUT, and DELETE. I documented the routes with Swagger, added validation for required fields, and deployed it to Render. I also kept secrets out of GitHub by using environment variables."
+
+That answer has a beginning, middle, and result.
+
+Beginning:
+
+"I built a Contacts API."
+
+Middle:
+
+"I added routes, validation, Swagger, and deployment."
+
+Result:
+
+"It runs online and follows security habits."
+
+### Interview Story For Project 2
+
+For Project 2:
+
+"I designed a library API with two MongoDB collections: books and authors. The books collection has more than seven fields, including title, author name, ISBN, genre, published year, pages, language, availability, and rating. I created CRUD routes for both collections, documented them in Swagger, added validation and error handling, and deployed the API to Render."
+
+That answer proves you can design something, not only follow a starter.
+
+### Common Interview Questions From This Course
+
+What is Node.js?
+
+Node.js is a runtime that lets JavaScript run outside the browser. In this course, Node runs the backend server.
+
+What is Express?
+
+Express is a Node framework for building web servers and API routes.
+
+What is middleware?
+
+Middleware is code that runs between the incoming request and the final route handler. It can parse JSON, check login, validate input, or handle errors.
+
+What does MVC mean?
+
+MVC means Model, View, Controller. In this course, the idea is to separate route logic, controller logic, and database access instead of putting everything in one file.
+
+What is MongoDB?
+
+MongoDB is a document database. It stores data in flexible documents that look similar to JSON.
+
+What is an ObjectId?
+
+An ObjectId is MongoDB's special id type. It uniquely identifies a document.
+
+What is validation?
+
+Validation checks incoming data before the app uses it or saves it.
+
+What is sanitizing?
+
+Sanitizing means cleaning input so it is safer and more consistent. For example, trimming spaces from text fields is a small form of sanitizing.
+
+What is the difference between 400 and 500 status codes?
+
+`400` means the client sent a bad request. `500` means the server had an unexpected problem.
+
+### Your Personal Course Summary
+
+By Week 07, you should be able to say:
+
+"I understand how a client sends an HTTP request to an Express API, how routes and middleware handle that request, how controllers talk to MongoDB through a data layer, how Swagger documents the contract, how Render hosts the app, how environment variables protect secrets, and how tests prove the main routes still work."
+
+That sentence is long, but it is the course in one breath.
+
+## Chapter 41: Full Request Examples From The Course Projects
+
+This chapter gives complete examples that you can study and modify.
+
+### Example 1: Get All Contacts
+
+Request:
+
+```http
+GET https://cse341-contacts-api-y3jc.onrender.com/contacts
+```
+
+Meaning:
+
+"Give me every contact."
+
+Expected response:
+
+```json
+[
+  {
+    "_id": "6aa5a54d0c84337849981672",
+    "firstName": "Ada",
+    "lastName": "Lovelace",
+    "email": "ada.lovelace@example.com",
+    "favoriteColor": "blue",
+    "birthday": "1815-12-10"
+  }
+]
+```
+
+Important details:
+
+- It uses `GET`.
+- It does not need a request body.
+- It returns an array.
+- The data comes from MongoDB.
+
+### Example 2: Create A Contact
+
+Request:
+
+```http
+POST https://cse341-contacts-api-y3jc.onrender.com/contacts
+Content-Type: application/json
+
+{
+  "firstName": "Test",
+  "lastName": "Student",
+  "email": "test.student@example.com",
+  "favoriteColor": "orange",
+  "birthday": "2000-05-15"
+}
+```
+
+Meaning:
+
+"Create a new contact with these fields."
+
+Expected response:
+
+```json
+{
+  "message": "Contact created successfully.",
+  "id": "66f1f53b6b39b57b5a147901",
+  "contact": {
+    "firstName": "Test",
+    "lastName": "Student",
+    "email": "test.student@example.com",
+    "favoriteColor": "orange",
+    "birthday": "2000-05-15",
+    "_id": "66f1f53b6b39b57b5a147901"
+  }
+}
+```
+
+Important details:
+
+- It uses `POST`.
+- It needs a JSON body.
+- The API validates the body.
+- The response status is `201`.
+- MongoDB creates the `_id`.
+
+### Example 3: Update A Contact
+
+Request:
+
+```http
+PUT https://cse341-contacts-api-y3jc.onrender.com/contacts/66f1f53b6b39b57b5a147901
+Content-Type: application/json
+
+{
+  "firstName": "Updated",
+  "lastName": "Student",
+  "email": "updated.student@example.com",
+  "favoriteColor": "green",
+  "birthday": "2000-05-15"
+}
+```
+
+Meaning:
+
+"Replace this contact with these updated field values."
+
+Expected response:
+
+```text
+204 No Content
+```
+
+Important details:
+
+- It uses `PUT`.
+- It needs an id in the URL.
+- It needs a full valid JSON body.
+- The response status is `204`.
+- You prove the update by reading the contact again or checking MongoDB.
+
+### Example 4: Delete A Contact
+
+Request:
+
+```http
+DELETE https://cse341-contacts-api-y3jc.onrender.com/contacts/66f1f53b6b39b57b5a147901
+```
+
+Meaning:
+
+"Remove this contact."
+
+Expected response:
+
+```text
+204 No Content
+```
+
+Important details:
+
+- It uses `DELETE`.
+- It needs an id in the URL.
+- It does not need a request body.
+- You prove deletion by checking MongoDB or trying to GET the same id again.
+
+### Example 5: Bad Contact Data
+
+Request:
+
+```http
+POST https://cse341-contacts-api-y3jc.onrender.com/contacts
+Content-Type: application/json
+
+{
+  "firstName": "",
+  "lastName": "Example",
+  "email": "not-an-email",
+  "favoriteColor": "",
+  "birthday": "not-a-date"
+}
+```
+
+Expected response:
+
+```json
+{
+  "error": "Validation failed",
+  "details": [
+    {
+      "field": "firstName",
+      "message": "firstName is required."
+    }
+  ]
+}
+```
+
+The exact list of details can include more fields. The important point is that the API rejects bad data before MongoDB saves it.
+
+## Chapter 42: A Practical Debugging Map
+
+When something breaks, do not guess wildly. Use the layer map.
+
+```mermaid
+flowchart TB
+  Problem[Problem appears] --> URL{Wrong URL?}
+  URL -->|Yes| Routes[Check route file]
+  URL -->|No| Method{Wrong method?}
+  Method -->|Yes| Routes
+  Method -->|No| Validation{400 response?}
+  Validation -->|Yes| ValidateFile[Check validation file and request body]
+  Validation -->|No| Missing{404 response?}
+  Missing -->|Yes| IdCheck[Check id and database document]
+  Missing -->|No| ServerError{500 response?}
+  ServerError -->|Yes| Logs[Check terminal or Render logs]
+  ServerError -->|No| DataIssue[Check MongoDB data and Swagger docs]
+```
+
+### If You See 400
+
+The request reached the route, but the data failed validation.
+
+Check:
+
+- Is every required field present?
+- Is email a real email shape?
+- Is birthday in `YYYY-MM-DD` format?
+- Is the id a real MongoDB ObjectId?
+
+### If You See 404
+
+The route or record was not found.
+
+Check:
+
+- Did you type the route correctly?
+- Did you use `/contacts` instead of `/contact`?
+- Does the id exist in MongoDB?
+- Did you delete the record earlier?
+
+### If You See 500
+
+The server had an unexpected problem.
+
+Check:
+
+- Is `MONGODB_URI` set?
+- Is the MongoDB password correct?
+- Is the Atlas IP access list allowing Render?
+- Are Render logs showing a package or startup error?
+
+### If Swagger Works Locally But Not On Render
+
+Check:
+
+- Did you push the latest code?
+- Did Render deploy the latest commit?
+- Does Render have all environment variables?
+- Does the app use `process.env.PORT`?
+- Is the route path the same in Swagger and Express?
+
+This is the kind of checklist that saves hours.
+
+## Chapter 43: Submission And Video Master Checklist
+
+This chapter is a practical checklist for turning working code into a strong submission.
+
+### Week 01 Contacts Part 1
+
+Show:
+
+- Render URL
+- `GET /contacts`
+- `GET /contacts/:id`
+- MongoDB collection
+- no `.env` in GitHub
+- no `node_modules` in GitHub
+- MVC files
+
+Say:
+
+"This proves the API retrieves all contacts and one contact by id from MongoDB. It is deployed on Render, secrets are not in GitHub, and the project uses separated server, route, controller, and database files."
+
+### Week 02 Contacts Part 2
+
+Show:
+
+- Render Swagger URL
+- `GET /contacts`
+- `GET /contacts/{id}`
+- `POST /contacts`
+- `PUT /contacts/{id}`
+- `DELETE /contacts/{id}`
+- MongoDB changing after POST, PUT, and DELETE
+- at least five contacts with required fields
+- no `.env` in GitHub
+- MVC files
+
+Say:
+
+"This proves all five Contacts endpoints are documented in Swagger and testable through `/api-docs`. The write routes update MongoDB, the database has the required contact fields, the app is deployed, credentials are protected, and the architecture is separated."
+
+### Week 03 Project 2 Part 1
+
+Show:
+
+- Project idea
+- two collections
+- one collection with seven or more fields
+- CRUD routes in Swagger
+- validation failure
+- error handling
+- Render deployment
+- MongoDB data
+
+Say:
+
+"This proves I designed my own API with two collections, full CRUD, validation, error handling, Swagger documentation, MongoDB persistence, and Render deployment."
+
+### Final Submission Habit
+
+Before submitting any assignment, open each link in a private browser window:
+
+- GitHub link
+- Render link
+- Swagger link
+- YouTube link
+
+If a private window can open the link, the grader probably can too.
+
+Do not submit only a homepage if the assignment asks for API docs. Submit the most useful link for grading, usually `/api-docs`.
+
+For Week 02, the strongest Render link is:
+
+```text
+https://cse341-contacts-api-y3jc.onrender.com/api-docs
+```
+
+For Week 01, either the base Contacts route or `/contacts` is useful:
+
+```text
+https://cse341-contacts-api-y3jc.onrender.com/contacts
+```
+
+For Project 2:
+
+```text
+https://cse341-project2-crud-api-zoq8.onrender.com/api-docs
+```
+
+The video should guide the grader through the evidence. You are not only saying the project works. You are showing why the rubric should give full credit.
+
 ## Expansion Plan For The Full 90-Page Version
 
-The current manuscript is the foundation. To expand it toward roughly 90 pages, add:
+The current manuscript is now a much larger foundation. To expand it even closer to a printable 90-page course book, add:
 
 - 8 to 10 pages on HTTP examples.
 - 8 to 10 pages on Express route design.
