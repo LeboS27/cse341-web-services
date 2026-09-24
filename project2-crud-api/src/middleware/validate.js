@@ -38,6 +38,19 @@ const authorRules = [
   body('website').optional({ values: 'falsy' }).trim().isURL().withMessage('website must be a valid URL.'),
 ];
 
+const registerRules = [
+  body('name').trim().notEmpty().withMessage('name is required.'),
+  body('email').trim().isEmail().withMessage('email must be valid.').normalizeEmail(),
+  body('password')
+    .isLength({ min: 8 })
+    .withMessage('password must be at least 8 characters long.'),
+];
+
+const loginRules = [
+  body('email').trim().isEmail().withMessage('email must be valid.').normalizeEmail(),
+  body('password').notEmpty().withMessage('password is required.'),
+];
+
 // Send a clear 400 response when validation fails.
 function sendValidationErrors(req, res, next) {
   const errors = validationResult(req);
@@ -58,5 +71,7 @@ module.exports = {
   authorRules,
   bookRules,
   idRule,
+  loginRules,
+  registerRules,
   sendValidationErrors,
 };

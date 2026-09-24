@@ -6,7 +6,8 @@ This workspace contains the projects and learning notes for CSE 341 Web Services
 
 - `w01-individual-activity`: Week 01 Individual Activity backend for the provided frontend.
 - `contacts-api`: Weeks 01-02 Contacts API.
-- `project2-crud-api`: Week 03 Project 2 CRUD API.
+- `project2-crud-api`: Weeks 03-04 Project 2 CRUD API with authentication.
+- `final-project-api`: Week 05 Final Project Part 1 API with two collections.
 - `book`: course book and long-form explanations.
 - `submission-notes`: official course-material index, checklists, and video scripts for Canvas submissions.
 - `diagrams`: reusable diagrams for the book and project explanations.
@@ -44,7 +45,7 @@ MongoDB connection strings contain usernames and passwords. Each project has an 
 
 ## Local Practice Mode
 
-Both APIs support `USE_MEMORY_STORE=true`. This lets the routes run without MongoDB so you can learn, test, and record practice walkthroughs.
+The APIs support `USE_MEMORY_STORE=true`. This lets the routes run without MongoDB so you can learn, test, and record practice walkthroughs.
 
 For final Canvas submissions, use real MongoDB. The rubrics expect the video to show database data and updates.
 
@@ -53,6 +54,7 @@ For final Canvas submissions, use real MongoDB. The rubrics expect the video to 
 - Week 01 Individual Activity: `http://localhost:8080/professional`
 - Contacts API: `http://localhost:8080/contacts`
 - Project 2 CRUD API: `http://localhost:8081/books` and `http://localhost:8081/authors`
+- Final Project API: `http://localhost:8082/events` and `http://localhost:8082/volunteers`
 
 Run only one project on port 8080 at a time. The Week 01 Individual Activity and Contacts API both default to 8080 because their course instructions expect that port.
 
@@ -69,6 +71,7 @@ This checks:
 - Week 01 Individual Activity boot.
 - Contacts API boot and route tests.
 - Project 2 API boot and route tests.
+- Final Project API boot and route tests.
 
 ## Suggested GitHub Setup
 
@@ -84,7 +87,7 @@ You may also create the repository manually on GitHub, then run:
 ```powershell
 git remote add origin https://github.com/YOUR-USERNAME/cse341-web-services.git
 git add .
-git commit -m "Build CSE 341 week 1 through 3 APIs"
+git commit -m "Build CSE 341 week 1 through 5 APIs"
 git push -u origin main
 ```
 

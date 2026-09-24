@@ -3,4 +3,5 @@
 **/coverage/
 **/npm-debug.log*
 .DS_Store
+output/
 w01-individual-api/

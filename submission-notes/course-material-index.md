@@ -97,6 +97,11 @@ Plain-language focus:
 
 Workspace evidence:
 
+- `project2-crud-api`
+- `project2-crud-api/src/routes/authRoutes.js`
+- `project2-crud-api/src/middleware/auth.js`
+- `project2-crud-api/swagger.json`
+- `submission-notes/week04-video-script.md`
 - `book/web-services-book.md`, especially the OAuth and protected route chapters.
 
 ## Week 05: API Gateways, Managers, And Final Project Part 1
@@ -117,6 +122,10 @@ Plain-language focus:
 
 Workspace evidence:
 
+- `final-project-api`
+- `final-project-api/swagger.json`
+- `final-project-api/requests.rest`
+- `submission-notes/week05-video-script.md`
 - `book/web-services-book.md`, especially the API gateway and final project readiness chapters.
 
 ## Week 06: Testing And Final Project Part 2
@@ -168,6 +177,8 @@ Workspace evidence:
 - Contacts Swagger docs: <https://cse341-contacts-api-y3jc.onrender.com/api-docs>
 - Project 2 API on Render: <https://cse341-project2-crud-api-zoq8.onrender.com>
 - Project 2 Swagger docs: <https://cse341-project2-crud-api-zoq8.onrender.com/api-docs>
+- Final Project API on Render: <https://cse341-final-project-api.onrender.com>
+- Final Project Swagger docs: <https://cse341-final-project-api.onrender.com/api-docs>
 
 ## How To Use This Index
 

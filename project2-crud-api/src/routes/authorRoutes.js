@@ -1,5 +1,6 @@
 const express = require('express');
 const { makeCrudController } = require('../controllers/makeCrudController');
+const { requireAuth } = require('../middleware/auth');
 const { authorRules, idRule, sendValidationErrors } = require('../middleware/validate');
 
 const router = express.Router();
@@ -20,13 +21,13 @@ router.get('/', controller.getAll);
 // GET /authors/:id returns one author by MongoDB ObjectId.
 router.get('/:id', idRule, sendValidationErrors, controller.getById);
 
-// POST /authors creates one author after required fields are validated.
-router.post('/', authorRules, sendValidationErrors, controller.create);
+// POST /authors creates one author after login and validation.
+router.post('/', requireAuth, authorRules, sendValidationErrors, controller.create);
 
-// PUT /authors/:id replaces one author after the id and body are validated.
-router.put('/:id', idRule, authorRules, sendValidationErrors, controller.update);
+// PUT /authors/:id replaces one author after login, id validation, and body validation.
+router.put('/:id', requireAuth, idRule, authorRules, sendValidationErrors, controller.update);
 
-// DELETE /authors/:id removes one author by id.
-router.delete('/:id', idRule, sendValidationErrors, controller.remove);
+// DELETE /authors/:id removes one author by id after login.
+router.delete('/:id', requireAuth, idRule, sendValidationErrors, controller.remove);
 
 module.exports = router;

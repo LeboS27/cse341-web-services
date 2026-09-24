@@ -6,6 +6,7 @@ const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('../swagger.json');
 const bookRoutes = require('./routes/bookRoutes');
 const authorRoutes = require('./routes/authorRoutes');
+const authRoutes = require('./routes/authRoutes');
 
 // createApp builds the Express app for Project 2.
 // Keeping this separate from server.js lets tests create the app without
@@ -31,11 +32,13 @@ function createApp({ store }) {
     res.json({
       message: 'Welcome to the CSE 341 Project 2 Library API.',
       collections: ['books', 'authors'],
+      auth: '/auth/register, /auth/login, /auth/me, /auth/logout',
       docs: '/api-docs',
     });
   });
 
   // Project 2 has two collections, so each collection gets its own route file.
+  app.use('/auth', authRoutes);
   app.use('/books', bookRoutes);
   app.use('/authors', authorRoutes);
 

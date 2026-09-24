@@ -1,0 +1,315 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "CSE 341 Final Project Campus Events API",
+    "description": "Week 05 final project API with two collections, full CRUD, validation, error handling, and Swagger documentation.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8082",
+      "description": "Local development"
+    },
+    {
+      "url": "https://cse341-final-project-api.onrender.com",
+      "description": "Render deployment"
+    }
+  ],
+  "paths": {
+    "/events": {
+      "get": {
+        "summary": "Get all events",
+        "description": "Returns every event from the events collection.",
+        "responses": {
+          "200": {
+            "description": "List of events",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Event" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create an event",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/EventInput" },
+              "example": {
+                "title": "API Showcase Night",
+                "description": "Students present APIs, Swagger docs, and MongoDB updates.",
+                "location": "Innovation Lab",
+                "startDate": "2026-11-01T17:00:00.000Z",
+                "endDate": "2026-11-01T19:00:00.000Z",
+                "category": "academic",
+                "capacity": 50,
+                "isPublic": true,
+                "organizerEmail": "showcase@example.edu"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Event created",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/CreatedEventResponse" }
+              }
+            }
+          },
+          "400": { "description": "Validation failed" }
+        }
+      }
+    },
+    "/events/{id}": {
+      "get": {
+        "summary": "Get one event",
+        "parameters": [{ "$ref": "#/components/parameters/Id" }],
+        "responses": {
+          "200": {
+            "description": "Event found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Event" }
+              }
+            }
+          },
+          "400": { "description": "Invalid ObjectId" },
+          "404": { "description": "Event not found" }
+        }
+      },
+      "put": {
+        "summary": "Update one event",
+        "parameters": [{ "$ref": "#/components/parameters/Id" }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/EventInput" },
+              "example": {
+                "title": "Updated Event",
+                "description": "Updated description for the final project video.",
+                "location": "Library Room 204",
+                "startDate": "2026-11-02T17:00:00.000Z",
+                "endDate": "2026-11-02T19:00:00.000Z",
+                "category": "service",
+                "capacity": 80,
+                "isPublic": false,
+                "organizerEmail": "updated@example.edu"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": { "description": "Event updated" },
+          "400": { "description": "Validation failed" },
+          "404": { "description": "Event not found" }
+        }
+      },
+      "delete": {
+        "summary": "Delete one event",
+        "parameters": [{ "$ref": "#/components/parameters/Id" }],
+        "responses": {
+          "204": { "description": "Event deleted" },
+          "400": { "description": "Invalid ObjectId" },
+          "404": { "description": "Event not found" }
+        }
+      }
+    },
+    "/volunteers": {
+      "get": {
+        "summary": "Get all volunteers",
+        "description": "Returns every volunteer from the volunteers collection.",
+        "responses": {
+          "200": {
+            "description": "List of volunteers",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Volunteer" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a volunteer",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/VolunteerInput" },
+              "example": {
+                "firstName": "Sam",
+                "lastName": "Taylor",
+                "email": "sam@example.edu",
+                "phone": "+12085550155",
+                "role": "usher",
+                "availability": "weekday evenings",
+                "status": "active"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Volunteer created",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/CreatedVolunteerResponse" }
+              }
+            }
+          },
+          "400": { "description": "Validation failed" }
+        }
+      }
+    },
+    "/volunteers/{id}": {
+      "get": {
+        "summary": "Get one volunteer",
+        "parameters": [{ "$ref": "#/components/parameters/Id" }],
+        "responses": {
+          "200": {
+            "description": "Volunteer found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Volunteer" }
+              }
+            }
+          },
+          "400": { "description": "Invalid ObjectId" },
+          "404": { "description": "Volunteer not found" }
+        }
+      },
+      "put": {
+        "summary": "Update one volunteer",
+        "parameters": [{ "$ref": "#/components/parameters/Id" }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/VolunteerInput" },
+              "example": {
+                "firstName": "Updated",
+                "lastName": "Volunteer",
+                "email": "updated@example.edu",
+                "phone": "+12085550156",
+                "role": "cleanup",
+                "availability": "saturday mornings",
+                "status": "inactive"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": { "description": "Volunteer updated" },
+          "400": { "description": "Validation failed" },
+          "404": { "description": "Volunteer not found" }
+        }
+      },
+      "delete": {
+        "summary": "Delete one volunteer",
+        "parameters": [{ "$ref": "#/components/parameters/Id" }],
+        "responses": {
+          "204": { "description": "Volunteer deleted" },
+          "400": { "description": "Invalid ObjectId" },
+          "404": { "description": "Volunteer not found" }
+        }
+      }
+    }
+  },
+  "components": {
+    "parameters": {
+      "Id": {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": { "type": "string" },
+        "description": "MongoDB ObjectId"
+      }
+    },
+    "schemas": {
+      "Event": {
+        "type": "object",
+        "properties": {
+          "_id": { "type": "string", "example": "66f1f53b6b39b57b5a147911" },
+          "title": { "type": "string", "example": "API Showcase Night" },
+          "description": { "type": "string", "example": "Students present APIs, Swagger docs, and MongoDB updates." },
+          "location": { "type": "string", "example": "Innovation Lab" },
+          "startDate": { "type": "string", "format": "date-time", "example": "2026-11-01T17:00:00.000Z" },
+          "endDate": { "type": "string", "format": "date-time", "example": "2026-11-01T19:00:00.000Z" },
+          "category": { "type": "string", "example": "academic" },
+          "capacity": { "type": "integer", "example": 50 },
+          "isPublic": { "type": "boolean", "example": true },
+          "organizerEmail": { "type": "string", "format": "email", "example": "showcase@example.edu" }
+        }
+      },
+      "EventInput": {
+        "type": "object",
+        "required": ["title", "description", "location", "startDate", "endDate", "category", "capacity", "isPublic", "organizerEmail"],
+        "properties": {
+          "title": { "type": "string", "example": "API Showcase Night" },
+          "description": { "type": "string", "example": "Students present APIs, Swagger docs, and MongoDB updates." },
+          "location": { "type": "string", "example": "Innovation Lab" },
+          "startDate": { "type": "string", "format": "date-time", "example": "2026-11-01T17:00:00.000Z" },
+          "endDate": { "type": "string", "format": "date-time", "example": "2026-11-01T19:00:00.000Z" },
+          "category": { "type": "string", "example": "academic" },
+          "capacity": { "type": "integer", "example": 50 },
+          "isPublic": { "type": "boolean", "example": true },
+          "organizerEmail": { "type": "string", "format": "email", "example": "showcase@example.edu" }
+        }
+      },
+      "CreatedEventResponse": {
+        "type": "object",
+        "properties": {
+          "message": { "type": "string", "example": "Event created successfully." },
+          "id": { "type": "string", "example": "66f1f53b6b39b57b5a147911" },
+          "event": { "$ref": "#/components/schemas/Event" }
+        }
+      },
+      "Volunteer": {
+        "type": "object",
+        "properties": {
+          "_id": { "type": "string", "example": "66f1f53b6b39b57b5a147912" },
+          "firstName": { "type": "string", "example": "Sam" },
+          "lastName": { "type": "string", "example": "Taylor" },
+          "email": { "type": "string", "format": "email", "example": "sam@example.edu" },
+          "phone": { "type": "string", "example": "+12085550155" },
+          "role": { "type": "string", "example": "usher" },
+          "availability": { "type": "string", "example": "weekday evenings" },
+          "status": { "type": "string", "enum": ["pending", "active", "inactive"], "example": "active" }
+        }
+      },
+      "VolunteerInput": {
+        "type": "object",
+        "required": ["firstName", "lastName", "email", "phone", "role", "availability", "status"],
+        "properties": {
+          "firstName": { "type": "string", "example": "Sam" },
+          "lastName": { "type": "string", "example": "Taylor" },
+          "email": { "type": "string", "format": "email", "example": "sam@example.edu" },
+          "phone": { "type": "string", "example": "+12085550155" },
+          "role": { "type": "string", "example": "usher" },
+          "availability": { "type": "string", "example": "weekday evenings" },
+          "status": { "type": "string", "enum": ["pending", "active", "inactive"], "example": "active" }
+        }
+      },
+      "CreatedVolunteerResponse": {
+        "type": "object",
+        "properties": {
+          "message": { "type": "string", "example": "Volunteer created successfully." },
+          "id": { "type": "string", "example": "66f1f53b6b39b57b5a147912" },
+          "volunteer": { "$ref": "#/components/schemas/Volunteer" }
+        }
+      }
+    }
+  }
+}

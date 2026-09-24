@@ -1,5 +1,6 @@
 const express = require('express');
 const { makeCrudController } = require('../controllers/makeCrudController');
+const { requireAuth } = require('../middleware/auth');
 const { bookRules, idRule, sendValidationErrors } = require('../middleware/validate');
 
 const router = express.Router();
@@ -20,13 +21,13 @@ router.get('/', controller.getAll);
 // GET /books/:id returns one book by MongoDB ObjectId.
 router.get('/:id', idRule, sendValidationErrors, controller.getById);
 
-// POST /books creates one book after the nine required fields are validated.
-router.post('/', bookRules, sendValidationErrors, controller.create);
+// POST /books creates one book after login and validation.
+router.post('/', requireAuth, bookRules, sendValidationErrors, controller.create);
 
-// PUT /books/:id replaces one book after the id and body are validated.
-router.put('/:id', idRule, bookRules, sendValidationErrors, controller.update);
+// PUT /books/:id replaces one book after login, id validation, and body validation.
+router.put('/:id', requireAuth, idRule, bookRules, sendValidationErrors, controller.update);
 
-// DELETE /books/:id removes one book by id.
-router.delete('/:id', idRule, sendValidationErrors, controller.remove);
+// DELETE /books/:id removes one book by id after login.
+router.delete('/:id', requireAuth, idRule, sendValidationErrors, controller.remove);
 
 module.exports = router;

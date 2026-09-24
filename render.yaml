@@ -36,5 +36,30 @@ services:
         value: books
       - key: AUTHORS_COLLECTION
         value: authors
+      - key: USERS_COLLECTION
+        value: users
+      - key: SESSIONS_COLLECTION
+        value: sessions
+      - key: USE_MEMORY_STORE
+        value: "false"
+
+  - type: web
+    name: cse341-final-project-api
+    runtime: node
+    plan: free
+    rootDir: final-project-api
+    buildCommand: npm ci
+    startCommand: npm start
+    autoDeployTrigger: commit
+    healthCheckPath: /
+    envVars:
+      - key: MONGODB_URI
+        sync: false
+      - key: DATABASE_NAME
+        value: cse341_final_project
+      - key: EVENTS_COLLECTION
+        value: events
+      - key: VOLUNTEERS_COLLECTION
+        value: volunteers
       - key: USE_MEMORY_STORE
         value: "false"

@@ -1,4 +1,4 @@
-# Project 2 CRUD API: CSE 341 Week 03
+# Project 2 CRUD API: CSE 341 Weeks 03-04
 
 This is a library API with two MongoDB collections:
 
@@ -6,6 +6,8 @@ This is a library API with two MongoDB collections:
 - `authors`
 
 The `books` collection has nine fields, so it satisfies the course rule that at least one collection should have seven or more fields.
+
+Week 04 adds authentication. Users can register, log in, view their logged-in profile, and log out. Create, update, and delete routes are protected by bearer-token login.
 
 ## Live Links
 
@@ -25,6 +27,15 @@ The `books` collection has nine fields, so it satisfies the course rule that at 
 - Published API on Render.
 - No secrets pushed to GitHub.
 
+## What Week 04 Requires
+
+- Account creation.
+- Login and logout.
+- Passwords stored as bcrypt hashes.
+- Some API features available only when logged in.
+- Swagger documentation that shows protected routes.
+- Sensitive credentials kept in environment variables.
+
 ## Rubric Proof
 
 - Two collections: `books` and `authors`
@@ -36,6 +47,9 @@ The `books` collection has nine fields, so it satisfies the course rule that at 
 - Error handling: invalid ids, missing records, bad data, and unexpected errors return JSON responses
 - Deployment: Render live links above
 - Security: real MongoDB credentials are stored in environment variables, not GitHub
+- Authentication routes: `POST /auth/register`, `POST /auth/login`, `GET /auth/me`, `POST /auth/logout`
+- Protected write routes: `POST`, `PUT`, and `DELETE` for `books` and `authors`
+- Password storage: passwords are hashed with bcrypt before saving
 
 ## Run Locally
 
@@ -50,6 +64,15 @@ Open:
 - `http://localhost:8081/authors`
 - `http://localhost:8081/api-docs`
 
+## Test The Protected Routes
+
+1. Open `/api-docs`.
+2. Run `POST /auth/register` or `POST /auth/login`.
+3. Copy the returned token.
+4. Click **Authorize** in Swagger.
+5. Paste only the token.
+6. Try a protected route such as `POST /books`.
+
 ## Environment
 
 Copy `.env.example` to `.env`, then add your real MongoDB connection string.
@@ -62,9 +85,16 @@ USE_MEMORY_STORE=true
 
 For submission, use MongoDB so the video can show database updates.
 
+Optional auth collection names:
+
+```text
+USERS_COLLECTION=users
+SESSIONS_COLLECTION=sessions
+```
+
 ## Extra Quality Added
 
-This Week 03 project is prepared for later course expectations too:
+This Project 2 API is prepared for later course expectations too:
 
 - It already includes Jest and Supertest route tests.
 - It uses two collections with full CRUD.

@@ -1,0 +1,104 @@
+@localBaseUrl = http://localhost:8082
+@renderBaseUrl = https://cse341-final-project-api.onrender.com
+@baseUrl = {{renderBaseUrl}}
+
+### Home route
+GET {{baseUrl}}/
+
+### Get all events
+GET {{baseUrl}}/events
+
+### Replace the id with a real _id returned from GET /events
+GET {{baseUrl}}/events/66f1f53b6b39b57b5a147911
+
+### Create an event
+POST {{baseUrl}}/events
+Content-Type: application/json
+
+{
+  "title": "API Showcase Night",
+  "description": "Students present APIs, Swagger docs, and MongoDB updates.",
+  "location": "Innovation Lab",
+  "startDate": "2026-11-01T17:00:00.000Z",
+  "endDate": "2026-11-01T19:00:00.000Z",
+  "category": "academic",
+  "capacity": 50,
+  "isPublic": true,
+  "organizerEmail": "showcase@example.edu"
+}
+
+### Update an event
+### Replace the id with a real _id returned from GET /events.
+PUT {{baseUrl}}/events/66f1f53b6b39b57b5a147911
+Content-Type: application/json
+
+{
+  "title": "Updated Event",
+  "description": "Updated description for the final project video.",
+  "location": "Library Room 204",
+  "startDate": "2026-11-02T17:00:00.000Z",
+  "endDate": "2026-11-02T19:00:00.000Z",
+  "category": "service",
+  "capacity": 80,
+  "isPublic": false,
+  "organizerEmail": "updated@example.edu"
+}
+
+### Delete an event
+### Replace the id with a real _id returned from GET /events.
+DELETE {{baseUrl}}/events/66f1f53b6b39b57b5a147911
+
+### Get all volunteers
+GET {{baseUrl}}/volunteers
+
+### Replace the id with a real _id returned from GET /volunteers
+GET {{baseUrl}}/volunteers/66f1f53b6b39b57b5a147912
+
+### Create a volunteer
+POST {{baseUrl}}/volunteers
+Content-Type: application/json
+
+{
+  "firstName": "Sam",
+  "lastName": "Taylor",
+  "email": "sam@example.edu",
+  "phone": "+12085550155",
+  "role": "usher",
+  "availability": "weekday evenings",
+  "status": "active"
+}
+
+### Update a volunteer
+### Replace the id with a real _id returned from GET /volunteers.
+PUT {{baseUrl}}/volunteers/66f1f53b6b39b57b5a147912
+Content-Type: application/json
+
+{
+  "firstName": "Updated",
+  "lastName": "Volunteer",
+  "email": "updated@example.edu",
+  "phone": "+12085550156",
+  "role": "cleanup",
+  "availability": "saturday mornings",
+  "status": "inactive"
+}
+
+### Delete a volunteer
+### Replace the id with a real _id returned from GET /volunteers.
+DELETE {{baseUrl}}/volunteers/66f1f53b6b39b57b5a147912
+
+### Validation example: this should return status 400
+POST {{baseUrl}}/events
+Content-Type: application/json
+
+{
+  "title": "",
+  "description": "",
+  "location": "",
+  "startDate": "not-a-date",
+  "endDate": "not-a-date",
+  "category": "",
+  "capacity": 0,
+  "isPublic": "maybe",
+  "organizerEmail": "not-email"
+}

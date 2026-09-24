@@ -19,4 +19,11 @@ npm run check
 npm test
 Pop-Location
 
+Write-Host 'Checking Final Project API...'
+Push-Location '.\final-project-api'
+$env:USE_MEMORY_STORE = 'true'
+npm run check
+npm test
+Pop-Location
+
 Write-Host 'All local checks completed.'

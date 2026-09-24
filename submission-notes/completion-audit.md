@@ -9,6 +9,8 @@ This audit maps the requested course work to the files, links, and checks that p
 - W01 Project: Contacts Part 1
 - W02 Project: Contacts Part 2
 - W03 Project 2 Part 1: CRUD Operations
+- W04 Project 2 Part 2: Authentication
+- W05 Final Project Part 1: First Two Collections
 - Simple comments and documentation throughout the code
 - Full course book for Weeks 01-07
 - Diagrams and illustrations for learning
@@ -111,6 +113,73 @@ Live links:
 
 Status: implemented, deployed, documented, tested, and verified.
 
+## W04 Project 2 Part 2: Authentication
+
+Evidence:
+
+- Project folder: `project2-crud-api`
+- Authentication routes: `project2-crud-api/src/routes/authRoutes.js`
+- Password hashing: `project2-crud-api/src/controllers/authController.js`
+- Protected route middleware: `project2-crud-api/src/middleware/auth.js`
+- Swagger file: `project2-crud-api/swagger.json`
+- Tests: `project2-crud-api/src/app.test.js`
+- Week 04 video script: `submission-notes/week04-video-script.md`
+
+Required auth routes:
+
+- `POST /auth/register`
+- `POST /auth/login`
+- `GET /auth/me`
+- `POST /auth/logout`
+
+Protected CRUD routes:
+
+- `POST /books`
+- `PUT /books/:id`
+- `DELETE /books/:id`
+- `POST /authors`
+- `PUT /authors/:id`
+- `DELETE /authors/:id`
+
+Live links:
+
+- Project 2 API: <https://cse341-project2-crud-api-zoq8.onrender.com>
+- Project 2 Swagger: <https://cse341-project2-crud-api-zoq8.onrender.com/api-docs>
+
+Status: implemented, documented, and tested locally. Push and verify Render after the Week 04 changes deploy.
+
+## W05 Final Project Part 1: First Two Collections
+
+Evidence:
+
+- Project folder: `final-project-api`
+- Swagger file: `final-project-api/swagger.json`
+- REST examples: `final-project-api/requests.rest`
+- Collections: `events` and `volunteers`
+- Tests: `final-project-api/src/app.test.js`
+- Week 05 video script: `submission-notes/week05-video-script.md`
+
+Required route groups:
+
+- `GET /events`
+- `GET /events/:id`
+- `POST /events`
+- `PUT /events/:id`
+- `DELETE /events/:id`
+- `GET /volunteers`
+- `GET /volunteers/:id`
+- `POST /volunteers`
+- `PUT /volunteers/:id`
+- `DELETE /volunteers/:id`
+- `GET /api-docs`
+
+Planned live links after the Render Blueprint is applied:
+
+- Final Project API: <https://cse341-final-project-api.onrender.com>
+- Final Project Swagger: <https://cse341-final-project-api.onrender.com/api-docs>
+
+Status: implemented, documented, and tested locally. Deploy the added Blueprint service before submitting Week 05.
+
 ## Comments And Documentation
 
 Evidence:
@@ -166,6 +235,8 @@ This checks:
 - Contacts API tests
 - Project 2 API boot
 - Project 2 API tests
+- Final Project API boot
+- Final Project API tests
 
 ## Submission Links
 
@@ -174,5 +245,7 @@ This checks:
 - Contacts Swagger docs: <https://cse341-contacts-api-y3jc.onrender.com/api-docs>
 - Project 2 API on Render: <https://cse341-project2-crud-api-zoq8.onrender.com>
 - Project 2 Swagger docs: <https://cse341-project2-crud-api-zoq8.onrender.com/api-docs>
+- Final Project API on Render: <https://cse341-final-project-api.onrender.com>
+- Final Project Swagger docs: <https://cse341-final-project-api.onrender.com/api-docs>
 
 YouTube links are added after each video upload is complete.
