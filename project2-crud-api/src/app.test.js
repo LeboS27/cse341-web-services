@@ -126,6 +126,24 @@ describe('Project 2 books routes', () => {
     expect(response.body).toHaveProperty('isbn');
   });
 
+  test('GET /books/:id rejects an invalid MongoDB id', async () => {
+    const { app } = await buildTestApp();
+
+    const response = await request(app).get('/books/not-a-real-id');
+
+    expect(response.status).toBe(400);
+    expect(response.body.error).toBe('Validation failed');
+  });
+
+  test('GET /books/:id returns 404 for a valid id that does not exist', async () => {
+    const { app } = await buildTestApp();
+
+    const response = await request(app).get('/books/507f1f77bcf86cd799439011');
+
+    expect(response.status).toBe(404);
+    expect(response.body.error).toBe('Book not found');
+  });
+
   test('POST /books creates a book and ignores extra fields', async () => {
     const { app } = await buildTestApp();
     const authHeader = await getAuthHeader(app);
@@ -236,6 +254,24 @@ describe('Project 2 authors routes', () => {
 
     expect(response.status).toBe(200);
     expect(response.body).toHaveProperty('country');
+  });
+
+  test('GET /authors/:id rejects an invalid MongoDB id', async () => {
+    const { app } = await buildTestApp();
+
+    const response = await request(app).get('/authors/not-a-real-id');
+
+    expect(response.status).toBe(400);
+    expect(response.body.error).toBe('Validation failed');
+  });
+
+  test('GET /authors/:id returns 404 for a valid id that does not exist', async () => {
+    const { app } = await buildTestApp();
+
+    const response = await request(app).get('/authors/507f1f77bcf86cd799439011');
+
+    expect(response.status).toBe(404);
+    expect(response.body.error).toBe('Author not found');
   });
 
   test('POST /authors creates an author and ignores extra fields', async () => {

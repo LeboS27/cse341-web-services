@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "CSE 341 Project 2 Library API",
-    "description": "Week 04 secured CRUD API with account creation, login, logout, protected write routes, validation, and MongoDB persistence.",
+    "description": "Week 03 CRUD API for books and authors, with Week 04 authentication already added. Swagger can test GET, POST, PUT, and DELETE for both collections.",
     "version": "1.1.0"
   },
   "servers": [

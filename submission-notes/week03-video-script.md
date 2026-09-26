@@ -1,97 +1,135 @@
 # Week 03 Project: Project 2 Part 1 Video Script
 
-Use this script for the Week 03 Project 2 Part 1 CRUD Operations video.
+Use this for the Week 03 Project 2 Part 1 CRUD Operations video.
 
-## Links To Submit
+Target length: 5-8 minutes.
+
+## Submission Links
 
 - GitHub repository: <https://github.com/LeboS27/cse341-web-services>
 - Project 2 API on Render: <https://cse341-project2-crud-api-zoq8.onrender.com>
 - Project 2 Swagger docs: <https://cse341-project2-crud-api-zoq8.onrender.com/api-docs>
 - YouTube video link: paste your unlisted YouTube link after upload
 
-## Before Recording
+## Important Note Before Recording
 
-Open these tabs:
+Week 04 authentication is already finished in this project, so Swagger requires a login token before testing `POST`, `PUT`, and `DELETE`.
 
-1. Project 2 Swagger docs: <https://cse341-project2-crud-api-zoq8.onrender.com/api-docs>
-2. Books endpoint: <https://cse341-project2-crud-api-zoq8.onrender.com/books>
-3. Authors endpoint: <https://cse341-project2-crud-api-zoq8.onrender.com/authors>
-4. GitHub repository: <https://github.com/LeboS27/cse341-web-services>
-5. MongoDB Atlas or Compass, opened to the Project 2 database.
+That is okay for Week 03. In the video, say:
 
-Do not show the real MongoDB connection string or database password.
+> This project already includes the Week 04 login layer, so I will log in first. After that, I will demonstrate the Week 03 CRUD requirements for both collections.
 
-## Video Goal
+## Tabs To Open Before You Start
 
-The video should prove these rubric items:
+Open these tabs in this order:
 
-- The API has at least two collections.
-- At least one collection has seven or more fields.
-- Each collection has working CRUD routes.
-- Swagger documents the routes.
-- Validation rejects bad data.
-- Error handling returns clear responses.
-- The API is deployed on Render.
-- Secrets are not stored in GitHub.
+1. Swagger docs: <https://cse341-project2-crud-api-zoq8.onrender.com/api-docs>
+2. GitHub repo: <https://github.com/LeboS27/cse341-web-services>
+3. MongoDB Atlas or Compass, opened to the `cse341_library` database.
 
-## Full Script
+Do not show the real MongoDB connection string or password.
 
-Hello, my name is Lebo. This is my CSE 341 Week 03 Project 2 Part 1 CRUD Operations project.
+## Exact Clicks And Words
 
-For this project, I built a small library API using Node.js, Express, MongoDB, and Swagger. The API is deployed on Render, and the database is stored in MongoDB Atlas.
+### 1. Start On Swagger
 
-The project has two MongoDB collections:
+Click the Swagger tab.
 
-- `books`
-- `authors`
+Say:
 
-The `books` collection has more than seven fields, including title, author name, ISBN, genre, published year, pages, language, availability, and rating.
+> Hello, my name is Lebo. This is my CSE 341 Week 03 Project 2 Part 1 CRUD Operations demonstration. The API is deployed on Render, not localhost. The live Swagger documentation is open at `/api-docs`.
 
-Now I will show the published API. This is the Render link:
+Say:
 
-```text
-https://cse341-project2-crud-api-zoq8.onrender.com
+> The Week 03 rubric asks for Swagger documentation, CRUD endpoints for at least two collections, validation, error handling, deployment, and no secrets in GitHub.
+
+### 2. Show The Two Collections
+
+Scroll through Swagger until you can see the `books` routes and the `authors` routes.
+
+Say:
+
+> My two MongoDB collections are `books` and `authors`. The `books` collection has nine fields: title, authorName, isbn, genre, publishedYear, pages, language, available, and rating. That is more than the seven-field requirement.
+
+### 3. Log In For Protected Write Routes
+
+Scroll to `POST /auth/register`.
+
+Click `POST /auth/register`.
+
+Click `Try it out`.
+
+In the request body box, replace the example with this JSON. Change the email number if you have already used it:
+
+```json
+{
+  "name": "Week Three Demo",
+  "email": "week3demo1001@example.com",
+  "password": "Password123!"
+}
 ```
 
-This is not localhost, so the project is running online.
+Click `Execute`.
 
-Next, I will open the Swagger documentation:
+Say:
 
-```text
-https://cse341-project2-crud-api-zoq8.onrender.com/api-docs
-```
+> This project already has the Week 04 authentication layer, so I am registering a demo user first. This gives me a token so I can test the protected Week 03 create, update, and delete routes.
 
-In Swagger, I can see route groups for books and authors. Each collection has the required CRUD routes.
+In the response body, highlight the `token` value.
 
-For books, the API has:
+Copy only the token text, without the quotation marks.
 
-- `GET /books`
-- `GET /books/{id}`
-- `POST /books`
-- `PUT /books/{id}`
-- `DELETE /books/{id}`
+Scroll to the top of Swagger.
 
-For authors, the API has:
+Click the green `Authorize` button.
 
-- `GET /authors`
-- `GET /authors/{id}`
-- `POST /authors`
-- `PUT /authors/{id}`
-- `DELETE /authors/{id}`
+Paste the token into the value box.
 
-Now I will test the books routes.
+Click `Authorize`.
 
-First, I open `GET /books`, click `Try it out`, and click `Execute`.
+Click `Close`.
 
-This returns all books from MongoDB. I can see JSON data, and each book includes the required fields. I will copy one `_id` value so I can test the get-by-id route.
+Say:
 
-Next, I open `GET /books/{id}`, paste that id, and click `Execute`.
+> Now Swagger is authorized, so the protected routes can be tested directly from the documentation.
 
-This returns one book by its MongoDB ObjectId. That proves the API can read one specific document.
+### 4. Books: GET All
 
-Now I will create a book using `POST /books`.
+Scroll to `GET /books`.
 
-I click `Try it out` and use this JSON:
+Click `GET /books`.
+
+Click `Try it out`.
+
+Click `Execute`.
+
+Say:
+
+> First I am testing `GET /books`. This returns all books from MongoDB. The response status is `200`, and the response body shows book records from the database.
+
+Copy one `_id` value from the response. Keep it somewhere temporary, like Notepad, because you will use it for the next step.
+
+### 5. Books: GET By ID
+
+Click `GET /books/{id}`.
+
+Click `Try it out`.
+
+Paste the copied book `_id` into the `id` box.
+
+Click `Execute`.
+
+Say:
+
+> Now I am testing `GET /books/{id}`. This returns one specific book by MongoDB ObjectId. The response status is `200`, so the retrieve-by-id route is working.
+
+### 6. Books: POST Create
+
+Click `POST /books`.
+
+Click `Try it out`.
+
+Paste this JSON into the request body:
 
 ```json
 {
@@ -107,15 +145,45 @@ I click `Try it out` and use this JSON:
 }
 ```
 
-When I execute the request, Swagger returns status `201`. That means the book was created.
+Click `Execute`.
 
-Now I switch to MongoDB Atlas or Compass and refresh the `books` collection.
+Say:
 
-The new book appears in MongoDB. This proves the POST route updates the database.
+> Now I am testing `POST /books`. Swagger returns status `201`, which means the book was created successfully.
 
-Next, I copy the new book id and test `PUT /books/{id}`.
+Copy the `id` value from the response. This is the new book id.
 
-I paste the id and use this updated JSON:
+Click the MongoDB tab.
+
+If you are in MongoDB Atlas:
+
+1. Click `Database`.
+2. Click `Browse Collections`.
+3. Click the `cse341_library` database.
+4. Click the `books` collection.
+5. Click the refresh button.
+
+If you are in MongoDB Compass:
+
+1. Click the `cse341_library` database.
+2. Click the `books` collection.
+3. Click the refresh button.
+
+Say:
+
+> I am refreshing the MongoDB `books` collection. The temporary demo book appears here, so the POST route updated the database.
+
+### 7. Books: PUT Update
+
+Go back to the Swagger tab.
+
+Click `PUT /books/{id}`.
+
+Click `Try it out`.
+
+Paste the new book id into the `id` box.
+
+Paste this JSON into the request body:
 
 ```json
 {
@@ -131,23 +199,81 @@ I paste the id and use this updated JSON:
 }
 ```
 
-When I execute the request, Swagger returns status `204`. That means the update worked.
+Click `Execute`.
 
-I refresh MongoDB and show that the book title, pages, availability, or rating changed.
+Say:
 
-Now I test `DELETE /books/{id}` using the same id.
+> Now I am testing `PUT /books/{id}`. Swagger returns status `204`, which means the update worked and there is no response body.
 
-When I execute the request, Swagger returns status `204`, which means the delete worked. I refresh MongoDB again and show that the temporary book is gone.
+Click the MongoDB tab.
 
-Now I will show the authors collection.
+Refresh the `books` collection.
 
-I open `GET /authors`, click `Try it out`, and click `Execute`.
+Say:
 
-This returns all authors from MongoDB.
+> After refreshing MongoDB, the book title and fields are updated. This proves the PUT route changes the database.
 
-Then I copy one author `_id`, open `GET /authors/{id}`, paste the id, and execute it. This returns one author by id.
+### 8. Books: DELETE
 
-Next, I create a temporary author using `POST /authors`.
+Go back to Swagger.
+
+Click `DELETE /books/{id}`.
+
+Click `Try it out`.
+
+Paste the same new book id into the `id` box.
+
+Click `Execute`.
+
+Say:
+
+> Now I am testing `DELETE /books/{id}`. Swagger returns status `204`, so the delete route worked.
+
+Click the MongoDB tab.
+
+Refresh the `books` collection.
+
+Say:
+
+> The temporary demo book is gone, so the delete request also updated the database.
+
+### 9. Authors: GET All
+
+Go back to Swagger.
+
+Click `GET /authors`.
+
+Click `Try it out`.
+
+Click `Execute`.
+
+Say:
+
+> Now I am testing the second collection, `authors`. `GET /authors` returns all authors from MongoDB with status `200`.
+
+Copy one author `_id` value from the response.
+
+### 10. Authors: GET By ID
+
+Click `GET /authors/{id}`.
+
+Click `Try it out`.
+
+Paste the copied author id into the `id` box.
+
+Click `Execute`.
+
+Say:
+
+> `GET /authors/{id}` returns one author by ObjectId, so the second collection also has retrieve-by-id functionality.
+
+### 11. Authors: POST Create
+
+Click `POST /authors`.
+
+Click `Try it out`.
+
+Paste this JSON into the request body:
 
 ```json
 {
@@ -159,9 +285,35 @@ Next, I create a temporary author using `POST /authors`.
 }
 ```
 
-The API returns status `201`, so the author was created. I refresh MongoDB and show that the author was added.
+Click `Execute`.
 
-Then I update the same author using `PUT /authors/{id}`.
+Say:
+
+> Now I am testing `POST /authors`. Swagger returns status `201`, so a new author was created.
+
+Copy the new author `id` from the response.
+
+Go to MongoDB.
+
+Click the `authors` collection.
+
+Click refresh.
+
+Say:
+
+> The temporary demo author appears in MongoDB, so the authors POST route works.
+
+### 12. Authors: PUT Update
+
+Go back to Swagger.
+
+Click `PUT /authors/{id}`.
+
+Click `Try it out`.
+
+Paste the new author id into the `id` box.
+
+Paste this JSON into the request body:
 
 ```json
 {
@@ -173,13 +325,53 @@ Then I update the same author using `PUT /authors/{id}`.
 }
 ```
 
-The API returns status `204`. I refresh MongoDB and show the updated author fields.
+Click `Execute`.
 
-Then I delete the temporary author using `DELETE /authors/{id}`. The API returns status `204`, and MongoDB no longer shows that temporary author.
+Say:
 
-Now I will show validation.
+> Now I am testing `PUT /authors/{id}`. Swagger returns status `204`, so the author update worked.
 
-I open `POST /books` and send bad data:
+Go to MongoDB.
+
+Refresh the `authors` collection.
+
+Say:
+
+> MongoDB now shows the updated author data, so the PUT route works for the second collection.
+
+### 13. Authors: DELETE
+
+Go back to Swagger.
+
+Click `DELETE /authors/{id}`.
+
+Click `Try it out`.
+
+Paste the same new author id into the `id` box.
+
+Click `Execute`.
+
+Say:
+
+> Now I am testing `DELETE /authors/{id}`. Swagger returns status `204`, so the author was deleted.
+
+Go to MongoDB.
+
+Refresh the `authors` collection.
+
+Say:
+
+> The temporary author is no longer in MongoDB. This proves delete works for the second collection too.
+
+### 14. Show Validation
+
+Go back to Swagger.
+
+Click `POST /books`.
+
+Click `Try it out`.
+
+Paste this bad JSON:
 
 ```json
 {
@@ -195,54 +387,105 @@ I open `POST /books` and send bad data:
 }
 ```
 
-This returns status `400` and a validation error. That proves the API checks data before saving it.
+Click `Execute`.
 
-Now I will show error handling.
+Say:
 
-I can test an invalid id route, such as:
+> Now I am showing validation. This request is missing required data and has invalid values. The API returns status `400` with validation details, so bad data is rejected before it is saved.
+
+### 15. Show Error Handling
+
+Click `GET /books/{id}`.
+
+Click `Try it out`.
+
+Type this into the `id` box:
 
 ```text
-GET /books/not-a-real-id
+not-a-real-id
 ```
 
-The API returns status `400` because the id is not a valid MongoDB ObjectId.
+Click `Execute`.
 
-If I use a valid-looking ObjectId that does not exist, the API returns status `404`. That means the route is found, but the record is not found.
+Say:
 
-Next, I will show the GitHub repository.
+> Now I am showing error handling. This is not a valid MongoDB ObjectId, so the API returns status `400` instead of crashing.
 
-The repository has separate folders and files for a clean structure:
+Replace the id with this valid-looking id:
 
-- `src/app.js` sets up Express, middleware, routes, and Swagger.
-- `src/routes` defines the route paths.
-- `src/controllers` handles request and response logic.
-- `src/data` talks to MongoDB or memory mode for tests.
-- `src/middleware/validate.js` checks bad input.
-- `swagger.json` documents the API.
+```text
+507f1f77bcf86cd799439011
+```
 
-This follows the MVC-style architecture expected in the course because routes, controller logic, and database access are separated.
+Click `Execute`.
 
-Finally, I will show that secrets are not stored in GitHub.
+Say:
 
-The repository has `.env.example`, but it does not contain the real MongoDB password. The real `MONGODB_URI` is stored in Render environment variables.
+> This id has the correct ObjectId shape, but it does not exist in the database. The API returns status `404`, which is the correct response for a missing record.
 
-To summarize, this Week 03 Project 2 API is deployed on Render, uses MongoDB, has two collections, includes full CRUD routes for both books and authors, documents everything in Swagger, validates bad input, handles errors clearly, protects secrets, and follows a clean file structure.
+### 16. Show GitHub And Secrets
 
-## Short Ending
+Click the GitHub tab.
 
-This completes my CSE 341 Week 03 Project 2 Part 1 CRUD Operations demonstration. Thank you.
+Click the `project2-crud-api` folder.
 
-## Quick Checklist
+Say:
 
-- Show Render URL, not localhost.
-- Show `/api-docs`.
-- Show `books` and `authors`.
-- Show `books` has seven or more fields.
-- Run GET all and GET by id.
-- Create, update, and delete a temporary book.
-- Create, update, and delete a temporary author.
-- Show MongoDB changing.
-- Show one validation failure with status `400`.
-- Show one error-handling example.
-- Show `.env` is not in GitHub.
-- Submit GitHub, Render, and YouTube links.
+> Now I am showing the GitHub repository. The Project 2 code is in the `project2-crud-api` folder.
+
+Click `src`.
+
+Click `routes`.
+
+Say:
+
+> The route files are separated by collection. This helps keep the architecture organized.
+
+Go back, then click `controllers`.
+
+Say:
+
+> The controller handles request and response logic, including try/catch error handling.
+
+Go back, then click `middleware`.
+
+Click `validate.js`.
+
+Say:
+
+> The validation middleware checks the POST and PUT data before it reaches the database.
+
+Go back to the repository root.
+
+Click `.gitignore`.
+
+Say:
+
+> The `.env` file is ignored, so MongoDB credentials are not pushed to GitHub.
+
+If you show `.env.example`, say:
+
+> `.env.example` only shows placeholder values. It does not contain the real password or connection string.
+
+### 17. Closing Statement
+
+Return to the Swagger tab or stay on GitHub.
+
+Say:
+
+> To summarize, this Week 03 Project 2 API is deployed on Render, documented in Swagger, and connected to MongoDB. It has two collections, `books` and `authors`. Both collections support GET, POST, PUT, and DELETE. The API validates bad data, returns proper status codes like `201`, `204`, `400`, and `404`, handles errors clearly, and keeps secrets out of GitHub. This completes my Week 03 CRUD Operations project.
+
+## Very Short Checklist While Recording
+
+- Show Render Swagger, not localhost.
+- Say there are two collections: `books` and `authors`.
+- Say `books` has nine fields.
+- Log in with `POST /auth/register`.
+- Press `Authorize` and paste token.
+- Books: GET all, GET by id, POST, PUT, DELETE.
+- Authors: GET all, GET by id, POST, PUT, DELETE.
+- Show MongoDB after create, update, and delete.
+- Show validation gives `400`.
+- Show invalid id gives `400`.
+- Show missing record gives `404`.
+- Show GitHub `.gitignore` proves `.env` is not pushed.

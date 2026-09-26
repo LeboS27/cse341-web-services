@@ -3,7 +3,7 @@ const swaggerAutogen = require('swagger-autogen')();
 const doc = {
   info: {
     title: 'CSE 341 Project 2 Library API',
-    description: 'Week 04 secured CRUD routes for books and authors',
+    description: 'Week 03 CRUD routes for books and authors with Week 04 authentication included',
   },
   host: 'localhost:8081',
   schemes: ['http'],
