@@ -42,6 +42,14 @@ services:
         value: sessions
       - key: USE_MEMORY_STORE
         value: "false"
+      - key: GITHUB_CLIENT_ID
+        sync: false
+      - key: GITHUB_CLIENT_SECRET
+        sync: false
+      - key: OAUTH_CALLBACK_URL
+        value: https://cse341-project2-crud-api-zoq8.onrender.com/auth/github/callback
+      - key: OAUTH_STATE_SECRET
+        sync: false
 
   - type: web
     name: cse341-final-project-api

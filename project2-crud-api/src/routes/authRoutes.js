@@ -5,6 +5,15 @@ const { loginRules, registerRules, sendValidationErrors } = require('../middlewa
 
 const router = express.Router();
 
+// Shows whether the deployed app has the GitHub OAuth settings it needs.
+router.get('/oauth/status', authController.oauthStatus);
+
+// Starts the GitHub OAuth login page.
+router.get('/github', authController.githubLogin);
+
+// GitHub sends the user back here after login.
+router.get('/github/callback', authController.githubCallback);
+
 // Create a user account, hash the password, and return a login token.
 router.post('/register', registerRules, sendValidationErrors, authController.register);
 

@@ -3,7 +3,7 @@ const swaggerAutogen = require('swagger-autogen')();
 const doc = {
   info: {
     title: 'CSE 341 Project 2 Library API',
-    description: 'Week 03 CRUD routes for books and authors with Week 04 authentication included',
+    description: 'Week 03 CRUD routes for books and authors with Week 04 GitHub OAuth authentication included',
   },
   host: 'localhost:8081',
   schemes: ['http'],
@@ -12,7 +12,7 @@ const doc = {
       type: 'apiKey',
       in: 'header',
       name: 'Authorization',
-      description: 'Use the token from /auth/login as: Bearer <token>',
+      description: 'Use the token from GitHub OAuth or /auth/login as: Bearer <token>',
     },
   },
 };

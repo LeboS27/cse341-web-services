@@ -7,7 +7,7 @@ This is a library API with two MongoDB collections:
 
 The `books` collection has nine fields, so it satisfies the course rule that at least one collection should have seven or more fields.
 
-Week 04 adds authentication. Users can register, log in, view their logged-in profile, and log out. Create, update, and delete routes are protected by bearer-token login.
+Week 04 adds authentication with GitHub OAuth. After GitHub login, the app gives the user a bearer token that can be pasted into Swagger. Create, update, and delete routes are protected by that token. Local register/login routes remain available for practice and automated tests.
 
 ## Live Links
 
@@ -15,6 +15,8 @@ Week 04 adds authentication. Users can register, log in, view their logged-in pr
 - Swagger docs: <https://cse341-project2-crud-api-zoq8.onrender.com/api-docs>
 - Books route: <https://cse341-project2-crud-api-zoq8.onrender.com/books>
 - Authors route: <https://cse341-project2-crud-api-zoq8.onrender.com/authors>
+- GitHub OAuth login: <https://cse341-project2-crud-api-zoq8.onrender.com/auth/github>
+- OAuth status: <https://cse341-project2-crud-api-zoq8.onrender.com/auth/oauth/status>
 - GitHub repository: <https://github.com/LeboS27/cse341-web-services>
 
 ## What Week 03 Requires
@@ -29,7 +31,7 @@ Week 04 adds authentication. Users can register, log in, view their logged-in pr
 
 ## What Week 04 Requires
 
-- Account creation.
+- GitHub OAuth login.
 - Login and logout.
 - Passwords stored as bcrypt hashes.
 - Some API features available only when logged in.
@@ -47,6 +49,7 @@ Week 04 adds authentication. Users can register, log in, view their logged-in pr
 - Error handling: invalid ids, missing records, bad data, and unexpected errors return JSON responses
 - Deployment: Render live links above
 - Security: real MongoDB credentials are stored in environment variables, not GitHub
+- OAuth routes: `GET /auth/oauth/status`, `GET /auth/github`, `GET /auth/github/callback`
 - Authentication routes: `POST /auth/register`, `POST /auth/login`, `GET /auth/me`, `POST /auth/logout`
 - Protected write routes: `POST`, `PUT`, and `DELETE` for `books` and `authors`
 - Password storage: passwords are hashed with bcrypt before saving
@@ -67,11 +70,13 @@ Open:
 ## Test The Protected Routes
 
 1. Open `/api-docs`.
-2. Run `POST /auth/register` or `POST /auth/login`.
-3. Copy the returned token.
+2. Open `/auth/github` in a browser and sign in with GitHub.
+3. Copy the token from the success page.
 4. Click **Authorize** in Swagger.
 5. Paste only the token.
 6. Try a protected route such as `POST /books`.
+
+For local practice, `POST /auth/register` and `POST /auth/login` can also create a token.
 
 ## Environment
 
@@ -90,6 +95,15 @@ Optional auth collection names:
 ```text
 USERS_COLLECTION=users
 SESSIONS_COLLECTION=sessions
+```
+
+GitHub OAuth settings:
+
+```text
+GITHUB_CLIENT_ID=your-github-oauth-client-id
+GITHUB_CLIENT_SECRET=your-github-oauth-client-secret
+OAUTH_CALLBACK_URL=https://cse341-project2-crud-api-zoq8.onrender.com/auth/github/callback
+OAUTH_STATE_SECRET=replace-with-a-long-random-string
 ```
 
 ## Extra Quality Added

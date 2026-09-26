@@ -14,6 +14,10 @@ const authRoutes = require('./routes/authRoutes');
 function createApp({ store }) {
   const app = express();
 
+  // Render sits in front of Express, so this helps Express understand
+  // the original public URL when building OAuth callback links.
+  app.set('trust proxy', 1);
+
   // CORS allows browser tools, Swagger, and frontends to call the API.
   app.use(cors());
 
@@ -32,7 +36,7 @@ function createApp({ store }) {
     res.json({
       message: 'Welcome to the CSE 341 Project 2 Library API.',
       collections: ['books', 'authors'],
-      auth: '/auth/register, /auth/login, /auth/me, /auth/logout',
+      auth: '/auth/github, /auth/oauth/status, /auth/register, /auth/login, /auth/me, /auth/logout',
       docs: '/api-docs',
     });
   });

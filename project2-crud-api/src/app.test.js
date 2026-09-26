@@ -50,6 +50,30 @@ function validAuthor(overrides = {}) {
   };
 }
 
+function setOAuthEnv(values) {
+  const keys = ['GITHUB_CLIENT_ID', 'GITHUB_CLIENT_SECRET', 'OAUTH_CALLBACK_URL', 'OAUTH_STATE_SECRET'];
+  const original = {};
+
+  keys.forEach((key) => {
+    original[key] = process.env[key];
+    if (values[key] === undefined) {
+      delete process.env[key];
+    } else {
+      process.env[key] = values[key];
+    }
+  });
+
+  return () => {
+    keys.forEach((key) => {
+      if (original[key] === undefined) {
+        delete process.env[key];
+      } else {
+        process.env[key] = original[key];
+      }
+    });
+  };
+}
+
 describe('Project 2 authentication routes', () => {
   test('POST /auth/register creates an account and returns a token', async () => {
     const { app, store } = await buildTestApp();
@@ -102,6 +126,48 @@ describe('Project 2 authentication routes', () => {
 
     expect(logout.status).toBe(204);
     expect(afterLogout.status).toBe(401);
+  });
+
+  test('GET /auth/oauth/status reports when GitHub OAuth needs Render settings', async () => {
+    const restoreEnv = setOAuthEnv({});
+
+    try {
+      const { app } = await buildTestApp();
+
+      const response = await request(app).get('/auth/oauth/status');
+
+      expect(response.status).toBe(200);
+      expect(response.body.provider).toBe('GitHub');
+      expect(response.body.configured).toBe(false);
+      expect(response.body.loginUrl).toBe('/auth/github');
+    } finally {
+      restoreEnv();
+    }
+  });
+
+  test('GET /auth/github redirects to GitHub when OAuth is configured', async () => {
+    const restoreEnv = setOAuthEnv({
+      GITHUB_CLIENT_ID: 'test-client-id',
+      GITHUB_CLIENT_SECRET: 'test-client-secret',
+      OAUTH_CALLBACK_URL: 'https://example.com/auth/github/callback',
+      OAUTH_STATE_SECRET: 'test-state-secret',
+    });
+
+    try {
+      const { app } = await buildTestApp();
+
+      const response = await request(app).get('/auth/github').redirects(0);
+      const redirectUrl = new URL(response.headers.location);
+
+      expect(response.status).toBe(302);
+      expect(`${redirectUrl.origin}${redirectUrl.pathname}`).toBe('https://github.com/login/oauth/authorize');
+      expect(redirectUrl.searchParams.get('client_id')).toBe('test-client-id');
+      expect(redirectUrl.searchParams.get('redirect_uri')).toBe('https://example.com/auth/github/callback');
+      expect(redirectUrl.searchParams.get('scope')).toBe('read:user user:email');
+      expect(redirectUrl.searchParams.get('state')).toContain('.');
+    } finally {
+      restoreEnv();
+    }
   });
 });
 

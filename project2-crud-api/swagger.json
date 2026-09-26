@@ -2,8 +2,8 @@
   "openapi": "3.0.0",
   "info": {
     "title": "CSE 341 Project 2 Library API",
-    "description": "Week 03 CRUD API for books and authors, with Week 04 authentication already added. Swagger can test GET, POST, PUT, and DELETE for both collections.",
-    "version": "1.1.0"
+    "description": "Week 03 CRUD API for books and authors, with Week 04 GitHub OAuth authentication. Swagger can test GET, POST, PUT, and DELETE for both collections.",
+    "version": "1.2.0"
   },
   "servers": [
     {
@@ -16,6 +16,69 @@
     }
   ],
   "paths": {
+    "/auth/oauth/status": {
+      "get": {
+        "summary": "Check GitHub OAuth setup",
+        "description": "Shows whether the deployed API has the Render environment variables needed for GitHub OAuth.",
+        "responses": {
+          "200": {
+            "description": "OAuth configuration status",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/OAuthStatus" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/github": {
+      "get": {
+        "summary": "Start GitHub OAuth login",
+        "description": "Redirects the user to GitHub. After login, GitHub redirects back to /auth/github/callback.",
+        "responses": {
+          "302": { "description": "Redirect to GitHub OAuth" },
+          "503": { "description": "OAuth environment variables are missing" }
+        }
+      }
+    },
+    "/auth/github/callback": {
+      "get": {
+        "summary": "GitHub OAuth callback",
+        "description": "GitHub redirects here after login. The API creates or updates the user and returns a bearer token for protected Swagger routes.",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "Authorization code from GitHub"
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "Signed state value that protects the OAuth flow"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OAuth login succeeded",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AuthResponse" }
+              },
+              "text/html": {
+                "schema": { "type": "string" }
+              }
+            }
+          },
+          "400": { "description": "Missing or invalid OAuth callback data" },
+          "503": { "description": "OAuth environment variables are missing" }
+        }
+      }
+    },
     "/auth/register": {
       "post": {
         "summary": "Create an account",
@@ -341,7 +404,7 @@
       "bearerAuth": {
         "type": "http",
         "scheme": "bearer",
-        "description": "Paste only the token returned by /auth/register or /auth/login."
+        "description": "Paste only the token returned by GitHub OAuth, /auth/register, or /auth/login."
       }
     },
     "parameters": {
@@ -371,12 +434,27 @@
           "password": { "type": "string", "example": "Password123!" }
         }
       },
+      "OAuthStatus": {
+        "type": "object",
+        "properties": {
+          "provider": { "type": "string", "example": "GitHub" },
+          "configured": { "type": "boolean", "example": true },
+          "loginUrl": { "type": "string", "example": "/auth/github" },
+          "callbackUrl": {
+            "type": "string",
+            "example": "https://cse341-project2-crud-api-zoq8.onrender.com/auth/github/callback"
+          },
+          "message": { "type": "string", "example": "GitHub OAuth is configured. Open /auth/github to log in." }
+        }
+      },
       "User": {
         "type": "object",
         "properties": {
           "id": { "type": "string", "example": "66f1f53b6b39b57b5a147900" },
           "name": { "type": "string", "example": "CSE Student" },
           "email": { "type": "string", "format": "email", "example": "student@example.com" },
+          "authProvider": { "type": "string", "example": "github" },
+          "githubUsername": { "type": "string", "example": "octocat" },
           "createdAt": { "type": "string", "format": "date-time", "example": "2026-09-24T12:00:00.000Z" }
         }
       },

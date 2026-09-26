@@ -25,6 +25,14 @@ class MongoAuthStore {
     return users.findOne({ email: email.toLowerCase() });
   }
 
+  async findUserByProvider(provider, providerId) {
+    const users = await this.usersCollection();
+    return users.findOne({
+      oauthProvider: provider,
+      oauthId: providerId.toString(),
+    });
+  }
+
   async findUserById(id) {
     const users = await this.usersCollection();
     return users.findOne({ _id: new ObjectId(id) });
@@ -39,6 +47,18 @@ class MongoAuthStore {
     };
     const result = await users.insertOne(savedUser);
     return { ...savedUser, _id: result.insertedId };
+  }
+
+  async updateUser(id, updates) {
+    const users = await this.usersCollection();
+    const safeUpdates = {
+      ...updates,
+      updatedAt: new Date().toISOString(),
+    };
+    delete safeUpdates._id;
+
+    await users.updateOne({ _id: new ObjectId(id) }, { $set: safeUpdates });
+    return this.findUserById(id);
   }
 
   async createSession(userId) {
@@ -85,6 +105,12 @@ class MemoryAuthStore {
     return this.users.find((user) => user.email === email.toLowerCase()) || null;
   }
 
+  async findUserByProvider(provider, providerId) {
+    return this.users.find((user) => (
+      user.oauthProvider === provider && user.oauthId === providerId.toString()
+    )) || null;
+  }
+
   async findUserById(id) {
     return this.users.find((user) => user._id.toString() === id.toString()) || null;
   }
@@ -98,6 +124,18 @@ class MemoryAuthStore {
     };
     this.users.push(savedUser);
     return savedUser;
+  }
+
+  async updateUser(id, updates) {
+    const user = await this.findUserById(id);
+    if (!user) {
+      return null;
+    }
+
+    Object.assign(user, updates, {
+      updatedAt: new Date().toISOString(),
+    });
+    return user;
   }
 
   async createSession(userId) {

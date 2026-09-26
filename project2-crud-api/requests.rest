@@ -6,6 +6,12 @@
 ### Home route
 GET {{baseUrl}}/
 
+### Check whether GitHub OAuth is configured on Render
+GET {{baseUrl}}/auth/oauth/status
+
+### Start GitHub OAuth login in the browser
+GET {{baseUrl}}/auth/github
+
 ### Register a user and copy the token into @token above
 POST {{baseUrl}}/auth/register
 Content-Type: application/json
