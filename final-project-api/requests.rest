@@ -1,19 +1,35 @@
 @localBaseUrl = http://localhost:8082
 @renderBaseUrl = https://cse341-final-project-api.onrender.com
 @baseUrl = {{renderBaseUrl}}
+@token = paste-oauth-token-here
 
 ### Home route
 GET {{baseUrl}}/
 
+### Check whether GitHub OAuth is configured
+GET {{baseUrl}}/auth/oauth/status
+
+### Open this route in a browser to log in with GitHub
+GET {{baseUrl}}/auth/github
+
+### Current OAuth user
+GET {{baseUrl}}/auth/me
+Authorization: Bearer {{token}}
+
+### Log out
+POST {{baseUrl}}/auth/logout
+Authorization: Bearer {{token}}
+
 ### Get all events
 GET {{baseUrl}}/events
 
-### Replace the id with a real _id returned from GET /events
+### Replace with a real _id from GET /events
 GET {{baseUrl}}/events/66f1f53b6b39b57b5a147911
 
 ### Create an event
 POST {{baseUrl}}/events
 Content-Type: application/json
+Authorization: Bearer {{token}}
 
 {
   "title": "API Showcase Night",
@@ -28,9 +44,9 @@ Content-Type: application/json
 }
 
 ### Update an event
-### Replace the id with a real _id returned from GET /events.
 PUT {{baseUrl}}/events/66f1f53b6b39b57b5a147911
 Content-Type: application/json
+Authorization: Bearer {{token}}
 
 {
   "title": "Updated Event",
@@ -45,18 +61,19 @@ Content-Type: application/json
 }
 
 ### Delete an event
-### Replace the id with a real _id returned from GET /events.
 DELETE {{baseUrl}}/events/66f1f53b6b39b57b5a147911
+Authorization: Bearer {{token}}
 
 ### Get all volunteers
 GET {{baseUrl}}/volunteers
 
-### Replace the id with a real _id returned from GET /volunteers
+### Replace with a real _id from GET /volunteers
 GET {{baseUrl}}/volunteers/66f1f53b6b39b57b5a147912
 
 ### Create a volunteer
 POST {{baseUrl}}/volunteers
 Content-Type: application/json
+Authorization: Bearer {{token}}
 
 {
   "firstName": "Sam",
@@ -69,9 +86,9 @@ Content-Type: application/json
 }
 
 ### Update a volunteer
-### Replace the id with a real _id returned from GET /volunteers.
 PUT {{baseUrl}}/volunteers/66f1f53b6b39b57b5a147912
 Content-Type: application/json
+Authorization: Bearer {{token}}
 
 {
   "firstName": "Updated",
@@ -84,21 +101,98 @@ Content-Type: application/json
 }
 
 ### Delete a volunteer
-### Replace the id with a real _id returned from GET /volunteers.
 DELETE {{baseUrl}}/volunteers/66f1f53b6b39b57b5a147912
+Authorization: Bearer {{token}}
 
-### Validation example: this should return status 400
-POST {{baseUrl}}/events
+### Get all registrations
+GET {{baseUrl}}/registrations
+
+### Replace with a real _id from GET /registrations
+GET {{baseUrl}}/registrations/66f1f53b6b39b57b5a147913
+
+### Create a registration
+POST {{baseUrl}}/registrations
 Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "eventTitle": "API Showcase Night",
+  "attendeeName": "Pat Student",
+  "attendeeEmail": "pat@example.edu",
+  "ticketType": "student",
+  "checkedIn": false,
+  "registeredAt": "2026-09-30T12:00:00.000Z"
+}
+
+### Update a registration
+PUT {{baseUrl}}/registrations/66f1f53b6b39b57b5a147913
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "eventTitle": "API Showcase Night",
+  "attendeeName": "Pat Student",
+  "attendeeEmail": "pat@example.edu",
+  "ticketType": "guest",
+  "checkedIn": true,
+  "registeredAt": "2026-09-30T12:00:00.000Z"
+}
+
+### Delete a registration
+DELETE {{baseUrl}}/registrations/66f1f53b6b39b57b5a147913
+Authorization: Bearer {{token}}
+
+### Get all announcements
+GET {{baseUrl}}/announcements
+
+### Replace with a real _id from GET /announcements
+GET {{baseUrl}}/announcements/66f1f53b6b39b57b5a147914
+
+### Create an announcement
+POST {{baseUrl}}/announcements
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "title": "Demo Announcement",
+  "message": "This announcement proves the fourth collection is working.",
+  "audience": "all",
+  "publishDate": "2026-09-30T12:00:00.000Z",
+  "expiresAt": "2026-10-30T12:00:00.000Z",
+  "isPinned": true,
+  "authorEmail": "announcements@example.edu"
+}
+
+### Update an announcement
+PUT {{baseUrl}}/announcements/66f1f53b6b39b57b5a147914
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "title": "Updated Announcement",
+  "message": "Updated announcement details.",
+  "audience": "students",
+  "publishDate": "2026-09-30T12:00:00.000Z",
+  "expiresAt": "2026-10-30T12:00:00.000Z",
+  "isPinned": false,
+  "authorEmail": "announcements@example.edu"
+}
+
+### Delete an announcement
+DELETE {{baseUrl}}/announcements/66f1f53b6b39b57b5a147914
+Authorization: Bearer {{token}}
+
+### Validation example: this should return 400 when logged in
+POST {{baseUrl}}/announcements
+Content-Type: application/json
+Authorization: Bearer {{token}}
 
 {
   "title": "",
-  "description": "",
-  "location": "",
-  "startDate": "not-a-date",
-  "endDate": "not-a-date",
-  "category": "",
-  "capacity": 0,
-  "isPublic": "maybe",
-  "organizerEmail": "not-email"
+  "message": "",
+  "audience": "parents",
+  "publishDate": "not-a-date",
+  "expiresAt": "not-a-date",
+  "isPinned": "maybe",
+  "authorEmail": "not-email"
 }

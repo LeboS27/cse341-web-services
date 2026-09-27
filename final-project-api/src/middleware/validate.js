@@ -34,6 +34,29 @@ const volunteerRules = [
     .withMessage('status must be pending, active, or inactive.'),
 ];
 
+const registrationRules = [
+  body('eventTitle').trim().notEmpty().withMessage('eventTitle is required.'),
+  body('attendeeName').trim().notEmpty().withMessage('attendeeName is required.'),
+  body('attendeeEmail').trim().isEmail().withMessage('attendeeEmail must be valid.').normalizeEmail(),
+  body('ticketType')
+    .isIn(['student', 'volunteer', 'guest'])
+    .withMessage('ticketType must be student, volunteer, or guest.'),
+  body('checkedIn').isBoolean().withMessage('checkedIn must be true or false.').toBoolean(),
+  body('registeredAt').isISO8601().withMessage('registeredAt must be a valid ISO date.'),
+];
+
+const announcementRules = [
+  body('title').trim().notEmpty().withMessage('title is required.'),
+  body('message').trim().notEmpty().withMessage('message is required.'),
+  body('audience')
+    .isIn(['students', 'volunteers', 'staff', 'all'])
+    .withMessage('audience must be students, volunteers, staff, or all.'),
+  body('publishDate').isISO8601().withMessage('publishDate must be a valid ISO date.'),
+  body('expiresAt').isISO8601().withMessage('expiresAt must be a valid ISO date.'),
+  body('isPinned').isBoolean().withMessage('isPinned must be true or false.').toBoolean(),
+  body('authorEmail').trim().isEmail().withMessage('authorEmail must be valid.').normalizeEmail(),
+];
+
 function sendValidationErrors(req, res, next) {
   const errors = validationResult(req);
   if (errors.isEmpty()) {
@@ -50,8 +73,10 @@ function sendValidationErrors(req, res, next) {
 }
 
 module.exports = {
+  announcementRules,
   eventRules,
   idRule,
+  registrationRules,
   sendValidationErrors,
   volunteerRules,
 };

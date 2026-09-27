@@ -1,5 +1,6 @@
 const express = require('express');
 const { makeCrudController } = require('../controllers/makeCrudController');
+const { requireAuth } = require('../middleware/auth');
 const { idRule, sendValidationErrors, volunteerRules } = require('../middleware/validate');
 
 const router = express.Router();
@@ -27,12 +28,12 @@ router.get('/', controller.getAll);
 router.get('/:id', idRule, sendValidationErrors, controller.getById);
 
 // POST /volunteers creates one volunteer after required fields are validated.
-router.post('/', volunteerRules, sendValidationErrors, controller.create);
+router.post('/', requireAuth, volunteerRules, sendValidationErrors, controller.create);
 
 // PUT /volunteers/:id replaces one volunteer after the id and body are validated.
-router.put('/:id', idRule, volunteerRules, sendValidationErrors, controller.update);
+router.put('/:id', requireAuth, idRule, volunteerRules, sendValidationErrors, controller.update);
 
 // DELETE /volunteers/:id removes one volunteer by id.
-router.delete('/:id', idRule, sendValidationErrors, controller.remove);
+router.delete('/:id', requireAuth, idRule, sendValidationErrors, controller.remove);
 
 module.exports = router;

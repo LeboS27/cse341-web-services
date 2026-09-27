@@ -1,7 +1,7 @@
 {
   "name": "final-project-api",
   "version": "1.0.0",
-  "description": "CSE 341 Week 05 final project API with two MongoDB collections, CRUD routes, validation, error handling, and Swagger documentation.",
+  "description": "CSE 341 final project API with four MongoDB collections, CRUD routes, validation, OAuth, tests, and Swagger documentation.",
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",

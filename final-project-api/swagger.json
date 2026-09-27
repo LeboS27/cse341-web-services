@@ -2,8 +2,8 @@
   "openapi": "3.0.0",
   "info": {
     "title": "CSE 341 Final Project Campus Events API",
-    "description": "Week 05 final project API with two collections, full CRUD, validation, error handling, and Swagger documentation.",
-    "version": "1.0.0"
+    "description": "Final project API with four MongoDB collections, full CRUD, validation, GitHub OAuth authentication, route tests, and Swagger documentation.",
+    "version": "2.0.0"
   },
   "servers": [
     {
@@ -16,19 +16,108 @@
     }
   ],
   "paths": {
+    "/auth/oauth/status": {
+      "get": {
+        "summary": "Check GitHub OAuth setup",
+        "description": "Shows whether the deployed API has the Render environment variables needed for GitHub OAuth.",
+        "responses": {
+          "200": {
+            "description": "OAuth configuration status",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/OAuthStatus" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/github": {
+      "get": {
+        "summary": "Start GitHub OAuth login",
+        "description": "Redirects the user to GitHub. After login, GitHub redirects back to /auth/github/callback.",
+        "responses": {
+          "302": { "description": "Redirect to GitHub OAuth" },
+          "503": { "description": "OAuth environment variables are missing" }
+        }
+      }
+    },
+    "/auth/github/callback": {
+      "get": {
+        "summary": "GitHub OAuth callback",
+        "description": "GitHub redirects here after login. The API creates or updates the user and returns a bearer token for protected Swagger routes.",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OAuth login succeeded",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AuthResponse" }
+              },
+              "text/html": {
+                "schema": { "type": "string" }
+              }
+            }
+          },
+          "400": { "description": "Missing or invalid OAuth callback data" },
+          "503": { "description": "OAuth environment variables are missing" }
+        }
+      }
+    },
+    "/auth/me": {
+      "get": {
+        "summary": "Get current logged-in user",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Current user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "user": { "$ref": "#/components/schemas/User" }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "description": "Authentication required" }
+        }
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "summary": "Log out",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "204": { "description": "Logged out" },
+          "401": { "description": "Authentication required" }
+        }
+      }
+    },
     "/events": {
       "get": {
         "summary": "Get all events",
-        "description": "Returns every event from the events collection.",
         "responses": {
           "200": {
             "description": "List of events",
             "content": {
               "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": { "$ref": "#/components/schemas/Event" }
-                }
+                "schema": { "type": "array", "items": { "$ref": "#/components/schemas/Event" } }
               }
             }
           }
@@ -36,35 +125,20 @@
       },
       "post": {
         "summary": "Create an event",
+        "description": "Protected route. Log in with GitHub OAuth first.",
+        "security": [{ "bearerAuth": [] }],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/EventInput" },
-              "example": {
-                "title": "API Showcase Night",
-                "description": "Students present APIs, Swagger docs, and MongoDB updates.",
-                "location": "Innovation Lab",
-                "startDate": "2026-11-01T17:00:00.000Z",
-                "endDate": "2026-11-01T19:00:00.000Z",
-                "category": "academic",
-                "capacity": 50,
-                "isPublic": true,
-                "organizerEmail": "showcase@example.edu"
-              }
+              "schema": { "$ref": "#/components/schemas/EventInput" }
             }
           }
         },
         "responses": {
-          "201": {
-            "description": "Event created",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/CreatedEventResponse" }
-              }
-            }
-          },
-          "400": { "description": "Validation failed" }
+          "201": { "description": "Event created" },
+          "400": { "description": "Validation failed" },
+          "401": { "description": "Authentication required" }
         }
       }
     },
@@ -87,38 +161,31 @@
       },
       "put": {
         "summary": "Update one event",
+        "security": [{ "bearerAuth": [] }],
         "parameters": [{ "$ref": "#/components/parameters/Id" }],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/EventInput" },
-              "example": {
-                "title": "Updated Event",
-                "description": "Updated description for the final project video.",
-                "location": "Library Room 204",
-                "startDate": "2026-11-02T17:00:00.000Z",
-                "endDate": "2026-11-02T19:00:00.000Z",
-                "category": "service",
-                "capacity": 80,
-                "isPublic": false,
-                "organizerEmail": "updated@example.edu"
-              }
+              "schema": { "$ref": "#/components/schemas/EventInput" }
             }
           }
         },
         "responses": {
           "204": { "description": "Event updated" },
-          "400": { "description": "Validation failed" },
+          "400": { "description": "Validation failed or invalid ObjectId" },
+          "401": { "description": "Authentication required" },
           "404": { "description": "Event not found" }
         }
       },
       "delete": {
         "summary": "Delete one event",
+        "security": [{ "bearerAuth": [] }],
         "parameters": [{ "$ref": "#/components/parameters/Id" }],
         "responses": {
           "204": { "description": "Event deleted" },
           "400": { "description": "Invalid ObjectId" },
+          "401": { "description": "Authentication required" },
           "404": { "description": "Event not found" }
         }
       }
@@ -126,16 +193,12 @@
     "/volunteers": {
       "get": {
         "summary": "Get all volunteers",
-        "description": "Returns every volunteer from the volunteers collection.",
         "responses": {
           "200": {
             "description": "List of volunteers",
             "content": {
               "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": { "$ref": "#/components/schemas/Volunteer" }
-                }
+                "schema": { "type": "array", "items": { "$ref": "#/components/schemas/Volunteer" } }
               }
             }
           }
@@ -143,33 +206,19 @@
       },
       "post": {
         "summary": "Create a volunteer",
+        "security": [{ "bearerAuth": [] }],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/VolunteerInput" },
-              "example": {
-                "firstName": "Sam",
-                "lastName": "Taylor",
-                "email": "sam@example.edu",
-                "phone": "+12085550155",
-                "role": "usher",
-                "availability": "weekday evenings",
-                "status": "active"
-              }
+              "schema": { "$ref": "#/components/schemas/VolunteerInput" }
             }
           }
         },
         "responses": {
-          "201": {
-            "description": "Volunteer created",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/CreatedVolunteerResponse" }
-              }
-            }
-          },
-          "400": { "description": "Validation failed" }
+          "201": { "description": "Volunteer created" },
+          "400": { "description": "Validation failed" },
+          "401": { "description": "Authentication required" }
         }
       }
     },
@@ -178,56 +227,197 @@
         "summary": "Get one volunteer",
         "parameters": [{ "$ref": "#/components/parameters/Id" }],
         "responses": {
-          "200": {
-            "description": "Volunteer found",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/Volunteer" }
-              }
-            }
-          },
+          "200": { "description": "Volunteer found" },
           "400": { "description": "Invalid ObjectId" },
           "404": { "description": "Volunteer not found" }
         }
       },
       "put": {
         "summary": "Update one volunteer",
+        "security": [{ "bearerAuth": [] }],
         "parameters": [{ "$ref": "#/components/parameters/Id" }],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/VolunteerInput" },
-              "example": {
-                "firstName": "Updated",
-                "lastName": "Volunteer",
-                "email": "updated@example.edu",
-                "phone": "+12085550156",
-                "role": "cleanup",
-                "availability": "saturday mornings",
-                "status": "inactive"
-              }
+              "schema": { "$ref": "#/components/schemas/VolunteerInput" }
             }
           }
         },
         "responses": {
           "204": { "description": "Volunteer updated" },
-          "400": { "description": "Validation failed" },
+          "400": { "description": "Validation failed or invalid ObjectId" },
+          "401": { "description": "Authentication required" },
           "404": { "description": "Volunteer not found" }
         }
       },
       "delete": {
         "summary": "Delete one volunteer",
+        "security": [{ "bearerAuth": [] }],
         "parameters": [{ "$ref": "#/components/parameters/Id" }],
         "responses": {
           "204": { "description": "Volunteer deleted" },
           "400": { "description": "Invalid ObjectId" },
+          "401": { "description": "Authentication required" },
           "404": { "description": "Volunteer not found" }
+        }
+      }
+    },
+    "/registrations": {
+      "get": {
+        "summary": "Get all registrations",
+        "responses": {
+          "200": {
+            "description": "List of registrations",
+            "content": {
+              "application/json": {
+                "schema": { "type": "array", "items": { "$ref": "#/components/schemas/Registration" } }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a registration",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/RegistrationInput" }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Registration created" },
+          "400": { "description": "Validation failed" },
+          "401": { "description": "Authentication required" }
+        }
+      }
+    },
+    "/registrations/{id}": {
+      "get": {
+        "summary": "Get one registration",
+        "parameters": [{ "$ref": "#/components/parameters/Id" }],
+        "responses": {
+          "200": { "description": "Registration found" },
+          "400": { "description": "Invalid ObjectId" },
+          "404": { "description": "Registration not found" }
+        }
+      },
+      "put": {
+        "summary": "Update one registration",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/Id" }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/RegistrationInput" }
+            }
+          }
+        },
+        "responses": {
+          "204": { "description": "Registration updated" },
+          "400": { "description": "Validation failed or invalid ObjectId" },
+          "401": { "description": "Authentication required" },
+          "404": { "description": "Registration not found" }
+        }
+      },
+      "delete": {
+        "summary": "Delete one registration",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/Id" }],
+        "responses": {
+          "204": { "description": "Registration deleted" },
+          "400": { "description": "Invalid ObjectId" },
+          "401": { "description": "Authentication required" },
+          "404": { "description": "Registration not found" }
+        }
+      }
+    },
+    "/announcements": {
+      "get": {
+        "summary": "Get all announcements",
+        "responses": {
+          "200": {
+            "description": "List of announcements",
+            "content": {
+              "application/json": {
+                "schema": { "type": "array", "items": { "$ref": "#/components/schemas/Announcement" } }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create an announcement",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/AnnouncementInput" }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Announcement created" },
+          "400": { "description": "Validation failed" },
+          "401": { "description": "Authentication required" }
+        }
+      }
+    },
+    "/announcements/{id}": {
+      "get": {
+        "summary": "Get one announcement",
+        "parameters": [{ "$ref": "#/components/parameters/Id" }],
+        "responses": {
+          "200": { "description": "Announcement found" },
+          "400": { "description": "Invalid ObjectId" },
+          "404": { "description": "Announcement not found" }
+        }
+      },
+      "put": {
+        "summary": "Update one announcement",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/Id" }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/AnnouncementInput" }
+            }
+          }
+        },
+        "responses": {
+          "204": { "description": "Announcement updated" },
+          "400": { "description": "Validation failed or invalid ObjectId" },
+          "401": { "description": "Authentication required" },
+          "404": { "description": "Announcement not found" }
+        }
+      },
+      "delete": {
+        "summary": "Delete one announcement",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/Id" }],
+        "responses": {
+          "204": { "description": "Announcement deleted" },
+          "400": { "description": "Invalid ObjectId" },
+          "401": { "description": "Authentication required" },
+          "404": { "description": "Announcement not found" }
         }
       }
     }
   },
   "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "Paste only the token returned by GitHub OAuth."
+      }
+    },
     "parameters": {
       "Id": {
         "name": "id",
@@ -238,20 +428,43 @@
       }
     },
     "schemas": {
-      "Event": {
+      "OAuthStatus": {
         "type": "object",
         "properties": {
-          "_id": { "type": "string", "example": "66f1f53b6b39b57b5a147911" },
-          "title": { "type": "string", "example": "API Showcase Night" },
-          "description": { "type": "string", "example": "Students present APIs, Swagger docs, and MongoDB updates." },
-          "location": { "type": "string", "example": "Innovation Lab" },
-          "startDate": { "type": "string", "format": "date-time", "example": "2026-11-01T17:00:00.000Z" },
-          "endDate": { "type": "string", "format": "date-time", "example": "2026-11-01T19:00:00.000Z" },
-          "category": { "type": "string", "example": "academic" },
-          "capacity": { "type": "integer", "example": 50 },
-          "isPublic": { "type": "boolean", "example": true },
-          "organizerEmail": { "type": "string", "format": "email", "example": "showcase@example.edu" }
+          "provider": { "type": "string", "example": "GitHub" },
+          "configured": { "type": "boolean", "example": true },
+          "loginUrl": { "type": "string", "example": "/auth/github" },
+          "callbackUrl": {
+            "type": "string",
+            "example": "https://cse341-final-project-api.onrender.com/auth/github/callback"
+          },
+          "message": { "type": "string", "example": "GitHub OAuth is configured. Open /auth/github to log in." }
         }
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "example": "66f1f53b6b39b57b5a147900" },
+          "name": { "type": "string", "example": "CSE Student" },
+          "email": { "type": "string", "format": "email", "example": "student@example.com" },
+          "authProvider": { "type": "string", "example": "github" },
+          "githubUsername": { "type": "string", "example": "octocat" },
+          "createdAt": { "type": "string", "format": "date-time", "example": "2026-09-24T12:00:00.000Z" }
+        }
+      },
+      "AuthResponse": {
+        "type": "object",
+        "properties": {
+          "message": { "type": "string", "example": "GitHub OAuth login successful." },
+          "token": { "type": "string", "example": "8f3f0f4fd052942de0f2..." },
+          "user": { "$ref": "#/components/schemas/User" }
+        }
+      },
+      "Event": {
+        "allOf": [
+          { "type": "object", "properties": { "_id": { "type": "string" } } },
+          { "$ref": "#/components/schemas/EventInput" }
+        ]
       },
       "EventInput": {
         "type": "object",
@@ -268,26 +481,11 @@
           "organizerEmail": { "type": "string", "format": "email", "example": "showcase@example.edu" }
         }
       },
-      "CreatedEventResponse": {
-        "type": "object",
-        "properties": {
-          "message": { "type": "string", "example": "Event created successfully." },
-          "id": { "type": "string", "example": "66f1f53b6b39b57b5a147911" },
-          "event": { "$ref": "#/components/schemas/Event" }
-        }
-      },
       "Volunteer": {
-        "type": "object",
-        "properties": {
-          "_id": { "type": "string", "example": "66f1f53b6b39b57b5a147912" },
-          "firstName": { "type": "string", "example": "Sam" },
-          "lastName": { "type": "string", "example": "Taylor" },
-          "email": { "type": "string", "format": "email", "example": "sam@example.edu" },
-          "phone": { "type": "string", "example": "+12085550155" },
-          "role": { "type": "string", "example": "usher" },
-          "availability": { "type": "string", "example": "weekday evenings" },
-          "status": { "type": "string", "enum": ["pending", "active", "inactive"], "example": "active" }
-        }
+        "allOf": [
+          { "type": "object", "properties": { "_id": { "type": "string" } } },
+          { "$ref": "#/components/schemas/VolunteerInput" }
+        ]
       },
       "VolunteerInput": {
         "type": "object",
@@ -302,12 +500,41 @@
           "status": { "type": "string", "enum": ["pending", "active", "inactive"], "example": "active" }
         }
       },
-      "CreatedVolunteerResponse": {
+      "Registration": {
+        "allOf": [
+          { "type": "object", "properties": { "_id": { "type": "string" } } },
+          { "$ref": "#/components/schemas/RegistrationInput" }
+        ]
+      },
+      "RegistrationInput": {
         "type": "object",
+        "required": ["eventTitle", "attendeeName", "attendeeEmail", "ticketType", "checkedIn", "registeredAt"],
         "properties": {
-          "message": { "type": "string", "example": "Volunteer created successfully." },
-          "id": { "type": "string", "example": "66f1f53b6b39b57b5a147912" },
-          "volunteer": { "$ref": "#/components/schemas/Volunteer" }
+          "eventTitle": { "type": "string", "example": "API Showcase Night" },
+          "attendeeName": { "type": "string", "example": "Pat Student" },
+          "attendeeEmail": { "type": "string", "format": "email", "example": "pat@example.edu" },
+          "ticketType": { "type": "string", "enum": ["student", "volunteer", "guest"], "example": "student" },
+          "checkedIn": { "type": "boolean", "example": false },
+          "registeredAt": { "type": "string", "format": "date-time", "example": "2026-09-30T12:00:00.000Z" }
+        }
+      },
+      "Announcement": {
+        "allOf": [
+          { "type": "object", "properties": { "_id": { "type": "string" } } },
+          { "$ref": "#/components/schemas/AnnouncementInput" }
+        ]
+      },
+      "AnnouncementInput": {
+        "type": "object",
+        "required": ["title", "message", "audience", "publishDate", "expiresAt", "isPinned", "authorEmail"],
+        "properties": {
+          "title": { "type": "string", "example": "Demo Announcement" },
+          "message": { "type": "string", "example": "This announcement proves the fourth collection is working." },
+          "audience": { "type": "string", "enum": ["students", "volunteers", "staff", "all"], "example": "all" },
+          "publishDate": { "type": "string", "format": "date-time", "example": "2026-09-30T12:00:00.000Z" },
+          "expiresAt": { "type": "string", "format": "date-time", "example": "2026-10-30T12:00:00.000Z" },
+          "isPinned": { "type": "boolean", "example": true },
+          "authorEmail": { "type": "string", "format": "email", "example": "announcements@example.edu" }
         }
       }
     }

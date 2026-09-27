@@ -1,9 +1,10 @@
 const { ObjectId } = require('mongodb');
 const { MongoConnection } = require('../config/database');
+const { MemoryAuthStore, MongoAuthStore } = require('./authStore');
 const seedData = require('./seedData');
 
 // MongoCollectionStore talks to one real MongoDB collection.
-// The same class is reused for events and volunteers.
+// The same class is reused for every final-project collection.
 class MongoCollectionStore {
   constructor(connection, collectionName) {
     this.connection = connection;
@@ -83,8 +84,11 @@ class MemoryCollectionStore {
 }
 
 class FinalProjectStore {
-  constructor({ events, volunteers, connection }) {
+  constructor({ announcements, auth, events, registrations, volunteers, connection }) {
+    this.announcements = announcements;
+    this.auth = auth;
     this.events = events;
+    this.registrations = registrations;
     this.volunteers = volunteers;
     this.connection = connection;
   }
@@ -103,14 +107,23 @@ async function createFinalProjectStore() {
     }
 
     return new FinalProjectStore({
+      announcements: new MemoryCollectionStore(seedData.announcements),
+      auth: new MemoryAuthStore(),
       events: new MemoryCollectionStore(seedData.events),
+      registrations: new MemoryCollectionStore(seedData.registrations),
       volunteers: new MemoryCollectionStore(seedData.volunteers),
     });
   }
 
   const connection = new MongoConnection();
   return new FinalProjectStore({
+    announcements: new MongoCollectionStore(connection, process.env.ANNOUNCEMENTS_COLLECTION || 'announcements'),
+    auth: new MongoAuthStore(connection, {
+      usersCollectionName: process.env.USERS_COLLECTION || 'users',
+      sessionsCollectionName: process.env.SESSIONS_COLLECTION || 'sessions',
+    }),
     events: new MongoCollectionStore(connection, process.env.EVENTS_COLLECTION || 'events'),
+    registrations: new MongoCollectionStore(connection, process.env.REGISTRATIONS_COLLECTION || 'registrations'),
     volunteers: new MongoCollectionStore(connection, process.env.VOLUNTEERS_COLLECTION || 'volunteers'),
     connection,
   });

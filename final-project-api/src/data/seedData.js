@@ -64,4 +64,66 @@ const volunteers = [
   },
 ];
 
-module.exports = { events, volunteers };
+const registrations = [
+  {
+    eventTitle: 'Career Prep Workshop',
+    attendeeName: 'Lebo Sebata',
+    attendeeEmail: 'lebo@example.edu',
+    ticketType: 'student',
+    checkedIn: false,
+    registeredAt: '2026-09-20T10:00:00.000Z',
+  },
+  {
+    eventTitle: 'Service Saturday',
+    attendeeName: 'Nora Peterson',
+    attendeeEmail: 'nora@example.edu',
+    ticketType: 'volunteer',
+    checkedIn: true,
+    registeredAt: '2026-09-21T11:30:00.000Z',
+  },
+  {
+    eventTitle: 'Web Services Study Night',
+    attendeeName: 'Kai Williams',
+    attendeeEmail: 'kai@example.edu',
+    ticketType: 'guest',
+    checkedIn: false,
+    registeredAt: '2026-09-22T08:45:00.000Z',
+  },
+];
+
+const announcements = [
+  {
+    title: 'Registration Opens',
+    message: 'Students can now register for October campus events.',
+    audience: 'students',
+    publishDate: '2026-09-25T12:00:00.000Z',
+    expiresAt: '2026-10-15T12:00:00.000Z',
+    isPinned: true,
+    authorEmail: 'events@example.edu',
+  },
+  {
+    title: 'Volunteer Reminder',
+    message: 'Please arrive fifteen minutes before your assigned shift.',
+    audience: 'volunteers',
+    publishDate: '2026-09-26T12:00:00.000Z',
+    expiresAt: '2026-10-20T12:00:00.000Z',
+    isPinned: false,
+    authorEmail: 'service@example.edu',
+  },
+  {
+    title: 'Room Change',
+    message: 'The Web Services Study Night moved to Library Room 204.',
+    audience: 'all',
+    publishDate: '2026-09-27T12:00:00.000Z',
+    expiresAt: '2026-10-14T20:00:00.000Z',
+    isPinned: true,
+    authorEmail: 'cse341@example.edu',
+  },
+];
+
+module.exports = {
+  announcements,
+  events,
+  registrations,
+  volunteers,
+};

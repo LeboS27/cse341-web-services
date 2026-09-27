@@ -1,5 +1,6 @@
 const express = require('express');
 const { makeCrudController } = require('../controllers/makeCrudController');
+const { requireAuth } = require('../middleware/auth');
 const { eventRules, idRule, sendValidationErrors } = require('../middleware/validate');
 
 const router = express.Router();
@@ -29,12 +30,12 @@ router.get('/', controller.getAll);
 router.get('/:id', idRule, sendValidationErrors, controller.getById);
 
 // POST /events creates one event after every required field is validated.
-router.post('/', eventRules, sendValidationErrors, controller.create);
+router.post('/', requireAuth, eventRules, sendValidationErrors, controller.create);
 
 // PUT /events/:id replaces one event after the id and body are validated.
-router.put('/:id', idRule, eventRules, sendValidationErrors, controller.update);
+router.put('/:id', requireAuth, idRule, eventRules, sendValidationErrors, controller.update);
 
 // DELETE /events/:id removes one event by id.
-router.delete('/:id', idRule, sendValidationErrors, controller.remove);
+router.delete('/:id', requireAuth, idRule, sendValidationErrors, controller.remove);
 
 module.exports = router;

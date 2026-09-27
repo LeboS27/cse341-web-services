@@ -69,5 +69,21 @@ services:
         value: events
       - key: VOLUNTEERS_COLLECTION
         value: volunteers
+      - key: REGISTRATIONS_COLLECTION
+        value: registrations
+      - key: ANNOUNCEMENTS_COLLECTION
+        value: announcements
+      - key: USERS_COLLECTION
+        value: users
+      - key: SESSIONS_COLLECTION
+        value: sessions
       - key: USE_MEMORY_STORE
         value: "false"
+      - key: GITHUB_CLIENT_ID
+        sync: false
+      - key: GITHUB_CLIENT_SECRET
+        sync: false
+      - key: OAUTH_CALLBACK_URL
+        value: https://cse341-final-project-api.onrender.com/auth/github/callback
+      - key: OAUTH_STATE_SECRET
+        sync: false
